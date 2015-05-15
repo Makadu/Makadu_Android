@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primaryDark</item>
+        <!--
+                <item name="android:colorPrimary">@color/primary</item>
+                <item name="android:colorPrimaryDark">@color/primary</item>
+                <item name="actionBarStyle">@style/ActionBar.Solid.Makadu</item>
+                <item name="actionBarItemBackground">@drawable/selectable_background_makadu</item>
+                <item name="popupMenuStyle">@style/PopupMenu.Makadu</item>
+                <item name="dropDownListViewStyle">@style/DropDownListView.Makadu</item>
+                <item name="actionBarTabStyle">@style/ActionBarTabStyle.Makadu</item>
+                <item name="actionDropDownStyle">@style/DropDownNav.Makadu</item>
+                <item name="actionModeBackground">@drawable/cab_background_top_makadu</item>
+                <item name="actionModeSplitBackground">@drawable/cab_background_bottom_makadu</item>
+                <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Makadu</item>-->
+
+        <item name="actionBarItemBackground">@drawable/selectable_background_makadu</item>
+        <item name="popupMenuStyle">@style/PopupMenu.Makadu</item>
+        <item name="dropDownListViewStyle">@style/DropDownListView.Makadu</item>
+        <item name="actionBarTabStyle">@style/ActionBarTabStyle.Makadu</item>
+        <item name="actionDropDownStyle">@style/DropDownNav.Makadu</item>
+        <item name="actionBarStyle">@style/ActionBar.Solid.Makadu</item>
+        <item name="actionModeBackground">@drawable/cab_background_top_makadu</item>
+        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_makadu</item>
+        <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Makadu</item>
+
+
+    </style>
+</resources>

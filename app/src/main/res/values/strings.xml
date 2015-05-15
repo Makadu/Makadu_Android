@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_k1">keyparse1</string>
+    <string name="app_k2">keyparse1</string>
+    <string name="app_name">Makadu</string>
+    <string name="app_aviso">Avisos</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_perfil">Perfil</string>
+    <string name="action_settings">Configurações</string>
+    <string name="title_activity_tab">Makadu</string>
+    <string name="title_section1">Evento</string>
+    <string name="title_section2">Programação</string>
+    <string name="title_activity_detalhe__evento">Detalhe Evento</string>
+    <string name="title_activity_tab__detalhe__evento">Detalhes do Evento</string>
+    <string name="action_search">Pesquisar...</string>
+    <string name="action_notification">Notificacão</string>
+    <string name="title_activity_detalhe__programacao">Detalhe da Programação</string>
+    <string name="title_activity_exemplo__notificacao">Notificacao</string>
+    <string name="encaminha_download_pergunta">Clique na atividade para a qual deseja enviar uma pergunta ou fazer o download do conteúdo na PROGRAMAÇÃO !</string>
+    <string name="download_efetuado_sucesso">O material da palestra foi enviado para seu e-mail com sucesso!</string>
+    <string name="pergunta_enviada_sucesso">Sua pergunta foi enviada com sucesso e aguarda moderação. Obrigado!</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="title_activity_notification">Notificações</string>
+
+</resources>

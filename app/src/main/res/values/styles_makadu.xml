@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <style name="Theme.Makadu" parent="@style/Theme.AppCompat.Light">
+        <item name="actionBarItemBackground">@drawable/selectable_background_makadu</item>
+        <item name="popupMenuStyle">@style/PopupMenu.Makadu</item>
+        <item name="dropDownListViewStyle">@style/DropDownListView.Makadu</item>
+        <item name="actionBarTabStyle">@style/ActionBarTabStyle.Makadu</item>
+        <item name="actionDropDownStyle">@style/DropDownNav.Makadu</item>
+        <item name="actionBarStyle">@style/ActionBar.Solid.Makadu</item>
+        <item name="actionModeBackground">@drawable/cab_background_top_makadu</item>
+        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_makadu</item>
+        <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Makadu</item>
+
+        
+    </style>
+
+    <style name="ActionBar.Solid.Makadu" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
+        <item name="background">@drawable/ab_solid_makadu</item>
+        <item name="backgroundStacked">@drawable/ab_stacked_solid_makadu</item>
+        <item name="backgroundSplit">@drawable/ab_bottom_solid_makadu</item>
+        <item name="progressBarStyle">@style/ProgressBar.Makadu</item>
+    </style>
+
+    <style name="ActionBar.Transparent.Makadu" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="background">@drawable/ab_transparent_makadu</item>
+        <item name="progressBarStyle">@style/ProgressBar.Makadu</item>
+    </style>
+	
+    <style name="PopupMenu.Makadu" parent="@style/Widget.AppCompat.Light.PopupMenu">	
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_makadu</item>	
+    </style>
+	
+    <style name="DropDownListView.Makadu" parent="@style/Widget.AppCompat.Light.ListView.DropDown">
+        <item name="android:listSelector">@drawable/selectable_background_makadu</item>
+    </style>
+
+    <style name="ActionBarTabStyle.Makadu" parent="@style/Widget.AppCompat.Light.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_indicator_ab_makadu</item>
+    </style>
+	
+    <style name="DropDownNav.Makadu" parent="@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar">
+        <item name="android:background">@drawable/spinner_background_ab_makadu</item>
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_makadu</item>
+        <item name="android:dropDownSelector">@drawable/selectable_background_makadu</item>
+    </style>
+    
+    <style name="ProgressBar.Makadu" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal_makadu</item>
+    </style>
+    
+    <style name="ActionButton.CloseMode.Makadu" parent="@style/Widget.AppCompat.Light.ActionButton.CloseMode">
+        <item name="android:background">@drawable/btn_cab_done_makadu</item>
+    </style>
+    
+    <!-- this style is only referenced in a Light.DarkActionBar based theme -->
+    <style name="Theme.Makadu.Widget" parent="@style/Theme.AppCompat">
+        <item name="popupMenuStyle">@style/PopupMenu.Makadu</item>
+        <item name="dropDownListViewStyle">@style/DropDownListView.Makadu</item>
+    </style>
+
+</resources>

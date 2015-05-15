@@ -1,0 +1,148 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="#FFFFFF"
+    android:id="@+id/fragment_tab_detalhe_evento_1"
+    tools:context="br.com.makadu.makaduevento.UI.Tab_DetalheEvento_Programacao$PlaceholderFragment">
+
+    <TextView android:id="@+id/section_label" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ScrollView android:id="@+id/detalhe_evento_form" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Aqui vai o name do Evento"
+                android:textColor="#004D40"
+                android:textStyle="bold"
+                android:id="@+id/txt_detalhe_evento_nome"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/img_logo_detalhe"
+                android:paddingTop="20dp"
+                android:layout_below="@+id/txt_detalhe_evento_nome"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/evento"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:id="@+id/linear_tab_detalhe_evento"
+                android:layout_below="@id/img_logo_detalhe"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Nós Coworking - 3 Andar"
+                    android:textSize="12dp"
+                    android:textColor="#1B5E20"
+                    android:id="@+id/txtLocal"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12dp"
+                    android:textColor="#1B5E20"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Shopping Total - Prédio 2 - Alameda dos Escritores - Bairro Floresta"
+                    android:id="@+id/txtEndereço"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12dp"
+                        android:textColor="#1B5E20"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Porto Alegre"
+                        android:id="@+id/txtCidade"
+                        />
+                    <TextView
+                        android:id="@+id/txtUF"
+                        android:text="RS"
+                        android:textSize="12dp"
+                        android:textColor="#1B5E20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:layout_marginLeft="5dp"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/linear_data_hora_a"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14dp"
+                        android:textColor="#1B5E20"
+                        android:textStyle="bold"
+                        android:text="01/01/2011"
+                        android:id="@+id/txtDataInicio"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12dp"
+                        android:textColor="#1B5E20"
+                        android:text="a"
+                        android:layout_marginLeft="3dp"
+                        android:id="@+id/txta"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14dp"
+                        android:textColor="#1B5E20"
+                        android:textStyle="bold"
+                        android:text="01/01/2020"
+                        android:layout_marginLeft="3dp"
+                        android:id="@+id/txtDataFim"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="     Aqui vai o texto Livre do Evento, vai muita coisa aqui. bla bla bla bla. teste de event para teste teste teste. Aqui vai o texto Livre do Evento, vai muita coisa aqui. bla bla bla bla. teste de event para teste teste teste."
+                android:id="@+id/txt_Textodescricao"
+                android:layout_marginTop="20dp"
+                android:layout_below="@+id/linear_tab_detalhe_evento"
+                android:layout_centerHorizontal="true" />
+
+
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

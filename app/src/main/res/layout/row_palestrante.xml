@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/Relative_row_evento_pales">
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view_palestrante_programacao"
+        card_view:cardUseCompatPadding="true"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        card_view:cardCornerRadius="2dp"
+        card_view:cardElevation="4dp"
+        >
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/Relative_row_palestrante">
+
+            <TextView
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:layout_marginLeft="5dp"
+                android:text="Lucas Schwalbe Ferreira"
+                android:textColor="#004D40"
+                android:id="@+id/txtNome_palestrante"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/img_patrocinador"
+                android:contentDescription="imgEvento"
+                android:src="@drawable/palestrante_programacao"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignBottom="@+id/txtNome_palestrante" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:textSize="14dp"
+                android:textColor="#004D40"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="   Aqui vai a descrição do Palestrante. Pode ser pequena como pode ser grande. pode não haver nada de descrição. "
+                android:id="@+id/txtObs"
+                android:layout_below="@+id/txtNome_palestrante"
+                android:layout_centerHorizontal="true" />
+
+
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.CardView>
+</RelativeLayout>

@@ -1,0 +1,4 @@
+/Users/lucasschwalbeferreira/Documents/Parse-Starter-Project-1.8.2/ParseStarterProject/build/intermediates/classes/debug
+/Users/lucasschwalbeferreira/Documents/Parse-Starter-Project-1.8.2/ParseStarterProject/build/intermediates/pre-dexed/debug/bolts-android-1.1.4-0fe2f03f663caca45b096c4a567c324bdc928baa.jar
+/Users/lucasschwalbeferreira/Documents/Parse-Starter-Project-1.8.2/ParseStarterProject/build/intermediates/pre-dexed/debug/ParseCrashReporting-1.8.2-3b0bdc9f01ade95605704db56d17cf7e2284a029.jar
+/Users/lucasschwalbeferreira/Documents/Parse-Starter-Project-1.8.2/ParseStarterProject/build/intermediates/pre-dexed/debug/Parse-1.8.2-f5a5e8aeaf5da2ad3a8a13fad25a96a553c16d69.jar
