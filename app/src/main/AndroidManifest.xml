@@ -24,17 +24,23 @@
         android:logo="@drawable/icon_white"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
-        <activity
-            android:screenOrientation="portrait"
-            android:name=".UI.PrincipalActivity"
-            android:icon="@drawable/icon_white"
-            android:label="@string/app_name"
-            android:logo="@drawable/icon_white" >
-        </activity>
+
+       <!-- <meta-data  android:name= "DATABASE"  android:value= "sugar_makadu.db"  />
+        <meta-data  android:name= "VERSION"  android:value= "2"  />
+        <meta-data  android:name= "QUERY_LOG"  android:value= "true"  />
+        <meta-data  android:name= "DOMAIN_PACKAGE_NAME"  android:value= "br.com.makadu.makaduevento.model"  />-->
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".UI.EventActivity"
+            android:icon="@drawable/icon_white"
+            android:label="@string/app_name"
+            android:logo="@drawable/icon_white"
+            android:screenOrientation="portrait" >
+        </activity>
 
         <activity
             android:name=".UI.DispatchActivity"
@@ -46,38 +52,42 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".UI.LoginActivity"
-            android:screenOrientation="portrait"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
         <activity
-            android:screenOrientation="portrait"
-            android:name=".UI.Tab_DetalheEvento_Programacao"
-            android:label="@string/title_activity_tab__detalhe__evento" >
+            android:name=".UI.Tab_EventDetail_Talk"
+            android:label="@string/title_activity_tab__detalhe__evento"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".UI.CreateAccountActivity"
-            android:noHistory="true"
             android:label="@string/app_name"
+            android:noHistory="true"
             android:screenOrientation="portrait" >
         </activity>
-
         <activity
-            android:screenOrientation="portrait"
-            android:name=".UI.DetalheProgramacaoActivity"
-            android:label="@string/title_activity_detalhe__programacao" >
+            android:name=".UI.TalkDetailActivity"
+            android:label="@string/title_activity_detalhe__programacao"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".UI.ConfiguracoesActivity"
-            android:label="@string/title_activity_configuracoes" >
+            android:name=".UI.NoticeActivity"
+            android:label="@string/title_activity_notification"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:screenOrientation="portrait"
-            android:name=".UI.NotificationActivity"
-            android:label="@string/title_activity_notification" >
+            android:name=".UI.SponsorScreenActivity"
+            android:label="@string/title_activity_sponsor_screen"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".UI.FavoriteActivity"
+            android:label="@string/title_activity_favorite"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

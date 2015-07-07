@@ -1,18 +1,13 @@
 package br.com.makadu.makaduevento.UI;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
@@ -27,7 +22,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
@@ -35,7 +29,9 @@ import com.parse.SignUpCallback;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.makadu.makaduevento.DAOParse.AnalitcsDAO;
 import br.com.makadu.makaduevento.R;
+import br.com.makadu.makaduevento.Util.Util;
 
 /**
  * Created by lucasschwalbeferreira on 04/05/15.
@@ -48,11 +44,16 @@ public class CreateAccountActivity extends Activity implements LoaderManager.Loa
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    Util util;
+    AnalitcsDAO analitics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
+
+        util = new Util(this);
+        analitics = new AnalitcsDAO();
 
         mNameView = (EditText) findViewById(R.id.txt_name_account);
 
@@ -124,7 +125,6 @@ public class CreateAccountActivity extends Activity implements LoaderManager.Loa
         boolean cancel = false;
         View focusView = null;
 
-
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
@@ -132,7 +132,7 @@ public class CreateAccountActivity extends Activity implements LoaderManager.Loa
             cancel = true;
         }
 
-        if (TextUtils.isEmpty(name)){
+        if (TextUtils.isEmpty(name)) {
             mNameView.setError(getString(R.string.error_field_required));
             focusView = mNameView;
             cancel = true;
@@ -160,9 +160,6 @@ public class CreateAccountActivity extends Activity implements LoaderManager.Loa
             // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-//            showProgress(true);
 
             showProgress(true);
 
@@ -179,8 +176,13 @@ public class CreateAccountActivity extends Activity implements LoaderManager.Loa
 
                     if (e2 == null) {
                         Toast.makeText(CreateAccountActivity.this, "Usuário: " + email + " criado!!!", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(CreateAccountActivity.this, PrincipalActivity.class);
+                        Intent intent = new Intent(CreateAccountActivity.this, EventActivity.class);
                         startActivity(intent);
+
+                        if(util.isConnected()) {
+                            analitics.saveDataAnalitcsWithUser(ParseUser.getCurrentUser(), "Cadastro", "Cadastre-se", "O usuário realizou o cadastro com sucesso.");
+                        }
+
                     } else {
                         Log.d("erro_parse", "e2 else: " + e2.getMessage());
 
@@ -191,16 +193,11 @@ public class CreateAccountActivity extends Activity implements LoaderManager.Loa
                     }
                     showProgress(false);
                 }
-
             });
-          //  showProgress(false);
-
-
         }
     }
 
     private boolean isPasswordValid(String password) {
-
         return password.length() >= 4;
     }
 
@@ -208,37 +205,9 @@ public class CreateAccountActivity extends Activity implements LoaderManager.Loa
         return email.contains("@");
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     public void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
+        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
     private void populateAutoComplete() {
@@ -275,9 +244,7 @@ public class CreateAccountActivity extends Activity implements LoaderManager.Loa
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
+    public void onLoaderReset(Loader<Cursor> cursorLoader) { }
 
     private interface ProfileQuery {
         String[] PROJECTION = {

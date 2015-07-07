@@ -1,0 +1,68 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    tools:context="br.com.makadu.makaduevento.UI.Tab_EventDetail_Talk$PlaceholderFragment">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Aguarde enquanto carregamos a programação completa..."
+            android:textColor="#004D40"
+            android:textStyle="bold"
+            android:id="@+id/txt_detalhe_evento_nome"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_centerHorizontal="true" />
+
+        <RelativeLayout
+            android:id="@+id/relative_interno_tab_prog"
+            android:layout_below="@id/txt_detalhe_evento_nome"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+           >
+            <ProgressBar
+                android:id="@+id/progressBar_talk"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:visibility="invisible" />
+            <!--<android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipeLoadingTalk"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">-->
+            <ExpandableListView
+                android:id="@+id/expandableListViewTalk"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+             />
+            <!--</android.support.v4.widget.SwipeRefreshLayout>-->
+            <!--<android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view_programacao"
+                android:scrollbars="vertical"
+                android:paddingTop="1dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>-->
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

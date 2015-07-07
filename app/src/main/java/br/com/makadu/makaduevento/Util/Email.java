@@ -20,7 +20,7 @@ import java.util.Map;
 
 
 
-import br.com.makadu.makaduevento.model.Programacao;
+import br.com.makadu.makaduevento.model.Talk;
 
 /**
  * Created by lucasschwalbeferreira on 27/03/15.
@@ -29,28 +29,28 @@ public class Email {
 
     ProgressDialog pd;
 
-    private boolean agendamento(Programacao talk, Context c) throws IOException{
+    private boolean agendamento(Talk talk, Context c) throws IOException {
 
         boolean ok = true;
 
         ParseQuery<ParseObject> pqprogram = ParseQuery.getQuery("Talks");
 
         ParseObject program = null;
-        try {
-        program = pqprogram.get (talk.getId());
 
-        }catch (Exception e){
+        try {
+            program = pqprogram.get (talk.getId());
+        } catch (Exception e) {
             ok = false;
             throw new IOException("erro http");
-
         }
+
         ParseObject schedule = new ParseObject("Schedule");
         schedule.put("talk", program);
         schedule.put("user", ParseUser.getCurrentUser());
+
         try {
             schedule.saveInBackground();
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             ok = false;
             throw new IOException("erro http");
         }
@@ -58,7 +58,7 @@ public class Email {
         return ok;
     }
 
-    public void sendEmailConteudoProgramacao(final Context c, final Programacao talk) {
+    public void sendEmailConteudoProgramacao(final Context c, final Talk talk) {
 
         final String TO = ParseUser.getCurrentUser().getEmail().toString();
 
@@ -75,8 +75,8 @@ public class Email {
 
         if (talk.getUrl().startsWith("http")) {
             ParseCloud.callFunctionInBackground("sendMail", params, new FunctionCallback<String>() {
-                public void done(String result, ParseException e) {
 
+                public void done(String result, ParseException e) {
                     if (e == null) {
                         AlertDialog.Builder alert = new AlertDialog.Builder(c);
                         alert.setMessage("O material foi enviado para o email " + TO + " com sucesso!");
@@ -90,59 +90,55 @@ public class Email {
             });
 
 
-        }
-        else {
-                AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        } else {
+            AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
-                    boolean ok = true;
+                boolean ok = true;
 
-                    @Override
-                    protected void onPreExecute() {
+                @Override
+                protected void onPreExecute() {
+                    pd = new ProgressDialog(c);
+                    pd.setTitle("Agendando Download");
+                    pd.setMessage("Carregando...");
+                    pd.setCancelable(false);
+                    pd.setIndeterminate(true);
+                    pd.show();
+                }
 
-                        pd = new ProgressDialog(c);
-                        pd.setTitle("Agendando Download");
-                        pd.setMessage("Carregando...");
-                        pd.setCancelable(false);
-                        pd.setIndeterminate(true);
-                        pd.show();
-                    }
+                @Override
+                protected Void doInBackground(Void... arg0) {
 
-                    @Override
-                    protected Void doInBackground(Void... arg0) {
-
-                        try {
-                            if (!agendamento(talk, c)) {
-                                ok = false;
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                    try {
+                        if (!agendamento(talk, c)) {
                             ok = false;
                         }
-
-
-                        return null;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        ok = false;
                     }
 
-                    @Override
-                    protected void onPostExecute(Void result) {
-                        if (pd != null) {
-                            if(ok) {
-                                AlertDialog.Builder alert = new AlertDialog.Builder(c);
-                                alert.setMessage("O material será enviado para " + TO + " quando disponível.");
-                                alert.setNeutralButton("OK", null);
-                                alert.show();
-                            }
-                            else{
-                                Toast.makeText(c,"Sem conexão com a internet, tente novamente mais tarde.", Toast.LENGTH_LONG).show();
-                            }
-                            pd.dismiss();
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void result) {
+                    if (pd != null) {
+                        if(ok) {
+                            AlertDialog.Builder alert = new AlertDialog.Builder(c);
+                            alert.setMessage("O material será enviado para " + TO + " quando disponível.");
+                            alert.setNeutralButton("OK", null);
+                            alert.show();
                         }
+                        else {
+                            Toast.makeText(c,"Sem conexão com a internet, tente novamente mais tarde.", Toast.LENGTH_LONG).show();
+                        }
+                        pd.dismiss();
                     }
+                }
+            };
 
-                };
-                task.execute((Void[]) null);
-
-            }
-            }
+            task.execute((Void[]) null);
+        }
+    }
 
 }

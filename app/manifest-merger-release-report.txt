@@ -59,7 +59,7 @@ MERGED from com.android.support:support-v4:21.0.3:16:5
 		ADDED from AndroidManifest.xml:20:9
 	android:logo
 		ADDED from AndroidManifest.xml:24:9
-activity#br.com.makadu.makaduevento.UI.PrincipalActivity
+activity#br.com.makadu.makaduevento.UI.EventActivity
 ADDED from AndroidManifest.xml:27:9
 	android:screenOrientation
 		ADDED from AndroidManifest.xml:28:13
@@ -106,7 +106,7 @@ ADDED from AndroidManifest.xml:50:9
 		ADDED from AndroidManifest.xml:53:13
 	android:name
 		ADDED from AndroidManifest.xml:51:13
-activity#br.com.makadu.makaduevento.UI.Tab_DetalheEvento_Programacao
+activity#br.com.makadu.makaduevento.UI.Tab_EventDetail_Talk
 ADDED from AndroidManifest.xml:56:9
 	android:screenOrientation
 		ADDED from AndroidManifest.xml:57:13
@@ -124,7 +124,7 @@ ADDED from AndroidManifest.xml:61:9
 		ADDED from AndroidManifest.xml:64:13
 	android:name
 		ADDED from AndroidManifest.xml:62:13
-activity#br.com.makadu.makaduevento.UI.DetalheProgramacaoActivity
+activity#br.com.makadu.makaduevento.UI.TalkDetailActivity
 ADDED from AndroidManifest.xml:68:9
 	android:screenOrientation
 		ADDED from AndroidManifest.xml:69:13
@@ -144,7 +144,7 @@ ADDED from AndroidManifest.xml:77:9
 		ADDED from AndroidManifest.xml:79:13
 	android:name
 		ADDED from AndroidManifest.xml:78:13
-activity#br.com.makadu.makaduevento.UI.NotificationActivity
+activity#br.com.makadu.makaduevento.UI.NoticeActivity
 ADDED from AndroidManifest.xml:81:9
 	android:screenOrientation
 		ADDED from AndroidManifest.xml:82:13

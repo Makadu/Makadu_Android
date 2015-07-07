@@ -4,16 +4,57 @@ android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
 
+    signingConfigs {
+        release {
+            storeFile file("../../app.keystore") //Path to the keystore file
+            keyAlias "app"
+            storePassword "12345678"
+            keyPassword "12345678"
+        }
+        production {
+            storeFile file("../../app.keystore") //Path to the keystore file
+            keyAlias "production"
+            storePassword "12345678"
+            keyPassword "12345678"
+        }
+        staging {
+            storeFile file("../../app.keystore") //Path to the keystore file
+            keyAlias "homolog"
+            storePassword "12345678"
+            keyPassword "12345678"
+        }
+    }
+
     defaultConfig {
         applicationId "br.com.makadu.makaduevento"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 6
-        versionName "1.0.1"
+        versionCode 9
+        versionName "1.1.3"
     }
+
+    productFlavors {
+        production {
+            applicationId "br.com.makadu.makaduevento"
+            buildConfigField "boolean", "HAS_PAYMENT", "true"
+            buildConfigField "boolean", "IS_SPECIAL", "true"
+            versionName "1.1.3"
+            signingConfig signingConfigs.production
+        }
+        staging {
+            applicationId "br.com.makadu.makaduevento.homolog"
+            buildConfigField "boolean", "HAS_PAYMENT", "false"
+            buildConfigField "boolean", "IS_SPECIAL", "false"
+            versionName "homologacao"
+            signingConfig signingConfigs.staging
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            productFlavors.production.signingConfig signingConfigs.production
+            productFlavors.staging.signingConfig signingConfigs.staging
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

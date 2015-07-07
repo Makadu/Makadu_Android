@@ -20,33 +20,31 @@ import br.com.makadu.makaduevento.model.Question;
 public class QuestionDAO {
 
 
-    public List<Question> returnQuestionList(String talk,NetworkInfo ni) {
+    public List<Question> returnQuestionList(String talk,boolean isConnected) {
 
         List<ParseObject> list_PO_Question;
         ArrayList<Question> question_list = new ArrayList<Question>();
 
         ParseQuery<ParseObject> programacao = ParseQuery.getQuery("Talks");
-        if(ni == null) {
+        if(!isConnected) {
             programacao.setCachePolicy(ParseQuery.CachePolicy.CACHE_ONLY);
-        }
-        else
-        {
-            if(programacao.hasCachedResult())
-            {
+        } else {
+            if(programacao.hasCachedResult()) {
                 programacao.setCachePolicy(ParseQuery.CachePolicy.CACHE_ONLY);
                 programacao.setMaxCacheAge(10);
 
-            }
-            else {
+            } else {
                 programacao.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
                 programacao.setMaxCacheAge(10);
             }
         }
+
         ParseObject tk = new ParseObject("Talks");
+
         try {
             tk = programacao.get(talk);
             ParseQuery<ParseObject> query = ParseQuery.getQuery("Questions");
-            if (ni == null){
+            if (!isConnected) {
                 query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ONLY);
             } else {
                 if(programacao.hasCachedResult()) {
@@ -57,26 +55,27 @@ public class QuestionDAO {
                     query.setMaxCacheAge(10);
                 }
             }
+
             query.whereNotEqualTo("active", false);
             query.whereEqualTo("talk", tk);
             query.orderByAscending("createdAt");
 
             try {
                 list_PO_Question = query.find();
+
                 for (ParseObject i_question : list_PO_Question) {
                     Question question = new Question();
-
                     question.setId(i_question.getObjectId());
-                    question.setQuestion((String)i_question.get("question"));
+                    question.setQuestion((String) i_question.get("question"));
                     question.setDate((Date) i_question.getCreatedAt());
 
                     question_list.add(question);
                 }
             } catch (ParseException e) {
-                Log.d("question_exception",e.getMessage());
+                Log.d("question_exception", e.getMessage());
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.d("question_exception", e.getMessage());
         }
 
         return question_list;

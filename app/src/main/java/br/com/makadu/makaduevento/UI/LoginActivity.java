@@ -1,8 +1,5 @@
 package br.com.makadu.makaduevento.UI;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -14,7 +11,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
@@ -51,6 +47,17 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private View mLoginFormView;
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        if(ParseUser.getCurrentUser() != null) {
+            Log.d("UserIni","onCreate, got user, " + ParseUser.getCurrentUser().getUsername());
+            startActivity(new Intent(this,EventActivity.class));
+            finish();
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
@@ -66,9 +73,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
                     attemptLogin();
                     return true;
-                }
-                else
-                {
+                } else {
                     return  false;
                 }
 
@@ -84,6 +89,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             public void onClick(View v) {
                 Intent it = new Intent(v.getContext(),CreateAccountActivity.class);
                 startActivity(it);
+                finish();
             }
         });
 
@@ -160,8 +166,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        final String email = mEmailView.getText().toString();
-        final String password = mPasswordView.getText().toString();
+        String email = mEmailView.getText().toString();
+        String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -192,7 +198,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         }
 
         if (cancel) {
-
             focusView.requestFocus();
         } else {
 
@@ -205,14 +210,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 public void done(ParseUser user, ParseException e) {
 
                     if (user != null) {
-                        Intent intent = new Intent(LoginActivity.this, PrincipalActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, EventActivity.class);
                         startActivity(intent);
                         limpauserlogin();
                         finish();
                     } else {
                         Log.d("userlogin", e.getMessage());
-                        Log.d("userlogin", email);
-                        Log.d("userlogin", password);
                         Toast.makeText(LoginActivity.this, "Usuário ou senha inválidos!!!", Toast.LENGTH_LONG).show();
                     }
                     showProgress(false);
@@ -231,40 +234,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         return password.length() >= 4;
     }
 
-    /**
-     * Shows the progress UI and hides the login form.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     public void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
     }
 
     @Override
@@ -297,9 +270,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
+    public void onLoaderReset(Loader<Cursor> cursorLoader) { }
 
     private interface ProfileQuery {
         String[] PROJECTION = {
@@ -321,10 +292,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         mEmailView.setAdapter(adapter);
     }
 
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
@@ -338,7 +305,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
-
             return true;
         }
 
@@ -348,7 +314,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             showProgress(false);
 
             if (success) {
-                Intent intent = new Intent(LoginActivity.this, PrincipalActivity.class);
+                Intent intent = new Intent(LoginActivity.this, EventActivity.class);
 
                 intent.getIntExtra("id_user",1);
 

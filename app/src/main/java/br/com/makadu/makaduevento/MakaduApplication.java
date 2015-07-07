@@ -3,7 +3,9 @@ package br.com.makadu.makaduevento;
 import android.app.Application;
 
 import com.parse.Parse;
+import com.parse.ParseClassName;
 import com.parse.ParseCrashReporting;
+import com.parse.ParseObject;
 
 
 /**
@@ -15,21 +17,10 @@ public class MakaduApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        // Initialize Crash Reporting.
         ParseCrashReporting.enable(this);
 
-        // Enable Local Datastore.
-        //Parse.enableLocalDatastore(this);
-
-        // Add your initialization code here
-        Parse.initialize(this,getString(R.string.app_k1),getString(R.string.app_k2));
-
-        //ParseUser.enableAutomaticUser();
-        //ParseACL defaultACL = new ParseACL();
-        // Optionally enable public read access.
-        //defaultACL.setPublicReadAccess(true);
-        //ParseACL.setDefaultACL(defaultACL, true);
-
+        Parse.initialize(this, getString(R.string.app_key1), getString(R.string.app_key2));
 
     }
 }
+

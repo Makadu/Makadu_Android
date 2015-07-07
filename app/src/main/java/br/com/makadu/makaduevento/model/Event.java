@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 public class Event implements Serializable {
 
-    private String id;
+    private String id_parse;
     private String name;
     private String description;
     private String local;
@@ -22,7 +22,7 @@ public class Event implements Serializable {
 
 
     public Event(String id, String name, String description, String local, String address, String city, String state, String start_date, String end_date, byte[] file_img_event) {
-        this.id = id;
+        this.id_parse = id;
         this.name = name;
         this.description = description;
         this.local = local;
@@ -36,12 +36,12 @@ public class Event implements Serializable {
 
     public Event(){};
 
-    public String getId() {
-        return id;
+    public String getId_Parse() {
+        return id_parse;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.id_parse = id;
     }
 
     public String getName() {

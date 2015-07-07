@@ -41,10 +41,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/action_name_account"
+                android:background="#ffffff"
+                android:padding="10dp"
                 android:layout_marginTop="10dp"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/input_login"
                 />
 
             <AutoCompleteTextView
@@ -55,13 +57,17 @@
                 android:layout_marginTop="10dp"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
+                android:background="#ffffff"
+                android:padding="10dp"
                 android:singleLine="true"
-                android:textColor="#FFFFFF"/>
+                android:textColor="@color/input_login"/>
 
             <EditText android:id="@+id/account_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_password"
+                android:background="#ffffff"
+                android:padding="10dp"
                 android:imeActionId="@+id/login_account"
                 android:imeActionLabel="@string/action_sign_in_short"
                 android:layout_marginTop="10dp"
@@ -69,14 +75,15 @@
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/input_login"
                 />
 
             <Button android:id="@+id/email_sign_in_button"
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#FFFFFF"
+                android:background="@color/btn_login_bg"
+                android:textColor="@color/btn_login"
                 android:layout_marginTop="16dp"
                 android:text="@string/action_create_account" />
 
@@ -86,9 +93,20 @@
                 android:layout_marginTop="25dp"
                 android:layout_gravity="center_horizontal"
                 android:textStyle="bold"
+                android:textSize="16dp"
                 android:text="Login"
                 android:textColor="#FFFFFF"
                 android:id="@+id/txt_back_login" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textSize="14dp"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/aviso_email"
+                android:textColor="#FFFFFF"
+                android:id="@+id/txt_aviso_email" />
 
         </LinearLayout>
     </ScrollView>

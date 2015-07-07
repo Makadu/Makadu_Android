@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -23,6 +25,17 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:layout_below="@+id/txt_avalie_essa_palestra"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Descrição"
+        android:inputType="textMultiLine"
+        android:lines="2"
+        android:ems="10"
+        android:id="@+id/edt_Descricao_rating"
+        android:layout_below="@+id/ratingBar_rating"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>

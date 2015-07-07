@@ -5,37 +5,33 @@ import android.net.NetworkInfo;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseRelation;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import br.com.makadu.makaduevento.model.Notice;
-import br.com.makadu.makaduevento.model.Palestrante;
-import br.com.makadu.makaduevento.model.Programacao;
 
 /**
  * Created by lucasschwalbeferreira on 08/04/15.
  */
 public class NoticeDAO {
 
-    public List<Notice> returnNoticeList(String event, NetworkInfo ni) {
+    public List<Notice> returnNoticeList(String event, boolean isConected) {
 
         List<ParseObject> list_PO_Notice;
         ArrayList<Notice> notice_list = new ArrayList<Notice>();
 
         ParseQuery<ParseObject> evento = ParseQuery.getQuery("Events");
 
-        if(ni == null) {
+        if(!isConected) {
             evento.setCachePolicy(ParseQuery.CachePolicy.CACHE_ONLY);
         }else {
             if(evento.hasCachedResult()){
                 evento.setCachePolicy(ParseQuery.CachePolicy.CACHE_ONLY);
                 evento.setMaxCacheAge(10);
-            }else{
-            evento.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
-            evento.setMaxCacheAge(10);
+            } else {
+                evento.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
+                evento.setMaxCacheAge(10);
             }
         }
 
@@ -43,14 +39,13 @@ public class NoticeDAO {
         try {
             ev = evento.get(event);
             ParseQuery<ParseObject> query = ParseQuery.getQuery("Notices");
-            if(ni == null) {
+            if(!isConected) {
                 query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ONLY);
-            }
-            else{
-                if (query.hasCachedResult()){
+            } else {
+                if (query.hasCachedResult()) {
                     query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ONLY);
                     query.setMaxCacheAge(10);
-                }else {
+                } else {
                     query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
                     query.setMaxCacheAge(10);
                 }
