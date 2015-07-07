@@ -37,6 +37,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -126,6 +127,27 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(mQueryTextListener);
 
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                List<Talk> filtered;
+
+                List<Talk> list_talk = new ArrayList<Talk>();
+
+                try {
+                    list_talk = proDAO.returnProgramacaoList(obj_event.getId_Parse(), util.isConnected(),true,false,Tab_EventDetail_Talk.this.getBaseContext());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                agrupamento(getApplicationContext(), list_talk, false);
+
+                adapter.notifyDataSetChanged();
+
+                return false;
+            }
+        });
+
         return true;
     }
 
@@ -155,16 +177,12 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
         return super.onOptionsItemSelected(item);
     }
 
+
+
     private SearchView.OnQueryTextListener mQueryTextListener = new SearchView.OnQueryTextListener() {
 
         @Override
         public boolean onQueryTextSubmit(String newText) {
-
-            return false;
-        }
-
-        @Override
-        public boolean onQueryTextChange(String newText) {
 
             List<Talk> filtered;
 
@@ -180,7 +198,12 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
             agrupamento(getApplicationContext(), filtered,false);
 
             adapter.notifyDataSetChanged();
-            //filtered = filter(newText, events);
+
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
 
             return false;
 

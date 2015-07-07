@@ -29,8 +29,8 @@ android {
         applicationId "br.com.makadu.makaduevento"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 9
-        versionName "1.1.3"
+        versionCode 10
+        versionName "1.1.4"
     }
 
     productFlavors {
@@ -38,7 +38,7 @@ android {
             applicationId "br.com.makadu.makaduevento"
             buildConfigField "boolean", "HAS_PAYMENT", "true"
             buildConfigField "boolean", "IS_SPECIAL", "true"
-            versionName "1.1.3"
+            versionName "1.1.4"
             signingConfig signingConfigs.production
         }
         staging {
