@@ -6,17 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -51,6 +46,7 @@ import br.com.makadu.makaduevento.Util.Util;
 import br.com.makadu.makaduevento.adapters.TalkExpandableAdapter;
 import br.com.makadu.makaduevento.model.Event;
 import br.com.makadu.makaduevento.model.Favorites;
+import br.com.makadu.makaduevento.model.Speaker;
 import br.com.makadu.makaduevento.model.Talk;
 
 
@@ -69,7 +65,6 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
 
     static Event obj_event;
 
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -84,7 +79,6 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
         ctx = this;
 
         util = new Util(getBaseContext());
-
         analitics = new AnalitcsDAO();
 
         mTitle = getTitle();
@@ -204,17 +198,18 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
 
         @Override
         public boolean onQueryTextChange(String newText) {
-
             return false;
-
         }
 
     };
 
     public List<Talk> filter(String text, List<Talk> target) {
         List<Talk> result = new ArrayList<Talk>();
+
         for (Talk element: target) {
-            if (element.getTitulo().toLowerCase(Locale.getDefault()).contains(text.toLowerCase(Locale.getDefault()))) {
+
+            if ( (element.getTitulo().toLowerCase(Locale.getDefault()).contains(text.toLowerCase(Locale.getDefault())) ) ||
+                    (element.getLocal().toLowerCase(Locale.getDefault()).contains(text.toLowerCase(Locale.getDefault())) ) ) {
                 result.add(element);
             }
         }
@@ -346,7 +341,6 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
 
         ProgressBar progress;
         ArrayList<Talk> array_pro;
-
         /*private RecyclerView mRecyclerView;
         private RecyclerView.Adapter mAdapter;
         private RecyclerView.LayoutManager mLayoutManager;

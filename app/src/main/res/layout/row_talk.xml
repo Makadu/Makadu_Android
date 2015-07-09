@@ -30,6 +30,11 @@
                 android:id="@+id/img_relogio_img"
                 android:src="@drawable/relogio_ic"
              />-->
+            <LinearLayout
+                android:id="@+id/linear_hora_titulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -53,13 +58,13 @@
                 android:textColor="#424242"
                 android:id="@+id/txtTitulo"
                 />
-
+</LinearLayout>
 <LinearLayout
     android:id="@+id/linear_local_hora"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
-    android:layout_below="@+id/txtTitulo">
+    android:layout_below="@+id/linear_hora_titulo">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -192,7 +197,15 @@
                 </LinearLayout>
         </LinearLayout>
 
-
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:id="@+id/img_avancar"
+                android:src="@drawable/forward25"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="30dp"
+                android:layout_marginRight="5dp"/>
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
