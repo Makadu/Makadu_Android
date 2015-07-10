@@ -16,3 +16,6 @@ Com o aplicativo, você pode:
 - Receber avisos da organização.
 - Favoritar as palestras.
 - Avaliar a Palestra.
+
+
+Nós usamos o Parse.com como backend, então você precisa criar uma conta e um banco de dados (gratuitos) lá para usar o nosso código. É uma solução temporária, vamos migrar para um servidor próprio assim que possível.
