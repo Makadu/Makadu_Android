@@ -3,14 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     package="br.com.makadu.makaduevento" >
 
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <!-- To access Google+ APIs: -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <!-- Notifications -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+
+    <permission android:protectionLevel="signature"
+        android:name="br.com.makadu.makaduevento.permission.C2D_MESSAGE" />
+    <uses-permission android:name="br.com.makadu.makaduevento.permission.C2D_MESSAGE" />
 
     <!--
  To retrieve OAuth 2.0 tokens or invalidate tokens to disconnect a user. This disconnect
@@ -25,14 +36,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
 
-       <!-- <meta-data  android:name= "DATABASE"  android:value= "sugar_makadu.db"  />
-        <meta-data  android:name= "VERSION"  android:value= "2"  />
-        <meta-data  android:name= "QUERY_LOG"  android:value= "true"  />
-        <meta-data  android:name= "DOMAIN_PACKAGE_NAME"  android:value= "br.com.makadu.makaduevento.model"  />-->
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <meta-data android:name="LOCALYTICS_APP_KEY" android:value="KEY"/>
 
         <activity
             android:name=".UI.EventActivity"
@@ -56,7 +64,8 @@
             android:name=".UI.LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateVisible" >
+            android:windowSoftInputMode="adjustResize|stateVisible"
+            android:configChanges="keyboardHidden">
         </activity>
         <activity
             android:name=".UI.Tab_EventDetail_Talk"
@@ -67,7 +76,8 @@
             android:name=".UI.CreateAccountActivity"
             android:label="@string/app_name"
             android:noHistory="true"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden">
         </activity>
         <activity
             android:name=".UI.TalkDetailActivity"
@@ -89,6 +99,37 @@
             android:label="@string/title_activity_favorite"
             android:screenOrientation="portrait">
         </activity>
+
+        <service android:name="com.parse.PushService" />
+        <receiver android:name="com.parse.ParseBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.parse.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <!--
+                  IMPORTANT: Change "com.parse.tutorials.pushnotifications" to match your app's package name.
+                -->
+                <category android:name="br.com.makadu.makaduevento" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.parse.ParsePushBroadcastReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="com.parse.push.intent.RECEIVE" />
+                <action android:name="com.parse.push.intent.DELETE" />
+                <action android:name="com.parse.push.intent.OPEN" />
+            </intent-filter>
+        </receiver>
+
+        <!-- replace @drawable/push_icon with your push icon identifier -->
+        <meta-data android:name="com.parse.push.notification_icon" android:resource="@drawable/log_ini"/>
+
     </application>
 
 </manifest>

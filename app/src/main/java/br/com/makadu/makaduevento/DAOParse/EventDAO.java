@@ -30,7 +30,8 @@ public class EventDAO {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Events");
 
         if(cache) {
-            query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ONLY);
+            //if(query.hasCachedResult())
+                query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ONLY);
         } else {
             if (!isConnected) {
                 query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ONLY);

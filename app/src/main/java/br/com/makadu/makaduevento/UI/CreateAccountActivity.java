@@ -3,6 +3,7 @@ package br.com.makadu.makaduevento.UI;
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -14,7 +15,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -22,6 +25,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.localytics.android.Localytics;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
@@ -29,7 +33,6 @@ import com.parse.SignUpCallback;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.makadu.makaduevento.DAOParse.AnalitcsDAO;
 import br.com.makadu.makaduevento.R;
 import br.com.makadu.makaduevento.Util.Util;
 
@@ -45,7 +48,14 @@ public class CreateAccountActivity extends Activity implements LoaderManager.Loa
     private View mProgressView;
     private View mLoginFormView;
     Util util;
-    AnalitcsDAO analitics;
+
+    @Override
+    protected void  onResume () {
+        super.onResume ();
+        Localytics.openSession();
+        Localytics.tagScreen ("Criar Conta");
+        Localytics.upload ();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +63,13 @@ public class CreateAccountActivity extends Activity implements LoaderManager.Loa
         setContentView(R.layout.activity_create_account);
 
         util = new Util(this);
-        analitics = new AnalitcsDAO();
 
         mNameView = (EditText) findViewById(R.id.txt_name_account);
-
         mEmailView = (AutoCompleteTextView) findViewById(R.id.account_email);
         populateAutoComplete();
+
+        util.closeVirtualKeyboard(mNameView);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         mPasswordView = (EditText) findViewById(R.id.account_password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -178,10 +189,6 @@ public class CreateAccountActivity extends Activity implements LoaderManager.Loa
                         Toast.makeText(CreateAccountActivity.this, "Usuário: " + email + " criado!!!", Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(CreateAccountActivity.this, EventActivity.class);
                         startActivity(intent);
-
-                        if(util.isConnected()) {
-                            analitics.saveDataAnalitcsWithUser(ParseUser.getCurrentUser(), "Cadastro", "Cadastre-se", "O usuário realizou o cadastro com sucesso.");
-                        }
 
                     } else {
                         Log.d("erro_parse", "e2 else: " + e2.getMessage());

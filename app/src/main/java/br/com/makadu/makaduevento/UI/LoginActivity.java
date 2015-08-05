@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -26,6 +27,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.localytics.android.Localytics;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -35,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.makadu.makaduevento.R;
+import br.com.makadu.makaduevento.Util.Util;
 
 public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
@@ -45,6 +48,14 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+
+    @Override
+    protected void  onResume () {
+        super.onResume ();
+        Localytics.openSession();
+        Localytics.tagScreen ("Login");
+        Localytics.upload ();
+    }
 
     @Override
     protected void onStart() {
@@ -64,6 +75,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
+
+        new Util(this).closeVirtualKeyboard(mEmailView);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         mPasswordView = (EditText) findViewById(R.id.password);
         limpauserlogin();

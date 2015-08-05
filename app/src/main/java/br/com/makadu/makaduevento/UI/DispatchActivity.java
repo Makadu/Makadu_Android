@@ -21,7 +21,7 @@ public class DispatchActivity extends Activity {
             startActivity(new Intent(this,EventActivity.class));
         } else {
             Log.d("UserIni","onCreate, no user");
-            startActivity(new Intent(this,LoginActivity.class));
+            startActivity(new Intent(this,CreateAccountActivity.class));
         }
     }
 }

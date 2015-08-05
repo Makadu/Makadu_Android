@@ -8,10 +8,12 @@ import java.util.Locale;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -26,7 +28,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -34,11 +35,13 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.localytics.android.Localytics;
 import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseUser;
 
-import br.com.makadu.makaduevento.DAOParse.AnalitcsDAO;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import br.com.makadu.makaduevento.DAOParse.EventDAO;
 import br.com.makadu.makaduevento.DAOParse.TalkDAO;
 import br.com.makadu.makaduevento.R;
@@ -46,7 +49,6 @@ import br.com.makadu.makaduevento.Util.Util;
 import br.com.makadu.makaduevento.adapters.TalkExpandableAdapter;
 import br.com.makadu.makaduevento.model.Event;
 import br.com.makadu.makaduevento.model.Favorites;
-import br.com.makadu.makaduevento.model.Speaker;
 import br.com.makadu.makaduevento.model.Talk;
 
 
@@ -61,7 +63,6 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
     Context ctx;
-    static AnalitcsDAO analitics;
 
     static Event obj_event;
 
@@ -73,16 +74,11 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_tab_event_detail);
 
         ctx = this;
-
         util = new Util(getBaseContext());
-        analitics = new AnalitcsDAO();
-
         mTitle = getTitle();
-
         obj_event=(Event)getIntent().getSerializableExtra("obj_event");
 
         final ActionBar actionBar = getSupportActionBar();
@@ -225,13 +221,6 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-
-        if(tab.getPosition() == 0) {
-            //register.setVisible(false);
-        } else {
-            //register.setVisible(true);
-        }
-
         mViewPager.setCurrentItem(tab.getPosition());
     }
 
@@ -296,8 +285,21 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
         public Fragment_Delalhe_Evento() { }
 
         @Override
+        public void  onResume () {
+            super.onResume ();
+            Localytics.openSession();
+            Localytics.tagScreen ("Detalhe Evento");
+            Localytics.upload ();
+        }
+
+        @Override
         public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
             final View rootView = inflater.inflate(R.layout.fragment_tab_event_detail, container, false);
+
+            Localytics.openSession();
+            Localytics.tagScreen("Detalhe Evento");
+            Localytics.tagEvent(obj_event.getName());
+            Localytics.upload ();
 
             TextView txt_nome_evento = (TextView)rootView.findViewById(R.id.txt_detalhe_evento_nome);
             txt_nome_evento.setText(obj_event.getName());
@@ -337,15 +339,15 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
         }
     }
 
-    public static class Fragment_Programacao extends Fragment  {
+    public static class Fragment_Programacao extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
         ProgressBar progress;
         ArrayList<Talk> array_pro;
-        /*private RecyclerView mRecyclerView;
-        private RecyclerView.Adapter mAdapter;
-        private RecyclerView.LayoutManager mLayoutManager;
-        */
+        private SwipeRefreshLayout mSwipeRefreshLayout;
+        View rootView;
         private static final String ARG_SECTION_NUMBER = "section_number";
+        boolean cache = false;
+        View viewtask;
 
         public static Fragment_Programacao newInstance(int sectionNumber) {
             Fragment_Programacao fragment = new Fragment_Programacao();
@@ -358,19 +360,45 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
         public Fragment_Programacao() {}
 
         @Override
+        public void  onResume () {
+            super.onResume ();
+            Localytics.openSession();
+            Localytics.tagScreen("Programacao");
+            Localytics.upload();
+        }
+
+        @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-            final View rootView = inflater.inflate(R.layout.fragment_tab_talk, container, false);
+            rootView = inflater.inflate(R.layout.fragment_tab_talk, container, false);
+
+            mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeLoading_Talk);
+            mSwipeRefreshLayout.setOnRefreshListener(this);
+            mSwipeRefreshLayout.setColorSchemeColors(R.color.Verde_Makadu);
 
             progress = (ProgressBar) rootView.findViewById(R.id.progressBar_talk);
 
-            loadData(rootView);
+            try {
+                if (returnFirstAccess(obj_event.getId_Parse())) {
+                    Log.v("first_acess_log", "retornou primeiro acesso true if");
+                    loadData(rootView, false);
+                } else {
+                    Log.v("first_acess_log", "retornou primeiro acesso false else");
+                    loadData(rootView, true);
+                }
+            }catch (Exception e) {
+                Log.v("erro_cache",e.getMessage());
+                loadData(rootView, false);
+            }
 
             return rootView;
 
         }
 
-        public void loadData(final View view) {
+        public void loadData(final View view, final boolean cache) {
+
+            this.viewtask = view;
+            this.cache = cache;
 
             AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
@@ -384,9 +412,14 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
 
                     Log.v("conectado", util.isConnected() + "");
                     try {
-                        array_pro = (ArrayList<Talk>) proDAO.returnProgramacaoList(obj_event.getId_Parse(), util.isConnected(),false,false,view.getContext());
+                        array_pro = (ArrayList<Talk>) proDAO.returnProgramacaoList(obj_event.getId_Parse(), util.isConnected(),cache,false,viewtask.getContext());
+                        Log.v("conectado", array_pro.toString());
+                        if(array_pro.isEmpty() || array_pro == null){
+                            Log.v("conectado", "deu pau mas restabeleceu");
+                            array_pro = (ArrayList<Talk>) proDAO.returnProgramacaoList(obj_event.getId_Parse(), util.isConnected(),false,false,viewtask.getContext());
+                        }
                     } catch (ParseException e) {
-                        e.printStackTrace();
+                        Log.v("erro_parse", "erro do parseexception");
                     }
 
                     return null;
@@ -396,14 +429,13 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
                 protected void onPostExecute(Void result) {
 
 
-                    ExpandableListView expandableListView = (ExpandableListView) view.findViewById(R.id.expandableListViewTalk);
-
-                    agrupamento(view.getContext(),array_pro,true);
-
+                    ExpandableListView expandableListView = (ExpandableListView) viewtask.findViewById(R.id.expandableListViewTalk);
+                    agrupamento(viewtask.getContext(),array_pro,true);
                     expandableListView.setAdapter(adapter);
 
+                    //expandi ExpandableListView por defaut
                     //for(int i = 0; i< adapter.getGroupCount();i++)
-                      //  expandableListView.expandGroup(i);
+                    //  expandableListView.expandGroup(i);
 
                     expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
                         @Override
@@ -414,22 +446,6 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
                             Intent intent = new Intent(v.getContext(), TalkDetailActivity.class);
                             intent.putExtra("id", talk);
                             v.getContext().startActivity(intent);
-
-                            new Thread(){
-                                public void run(){
-                                    try {
-                                        if(util.isConnected()) {
-                                            ParseObject eventObject = eventDAO.returnEvent(obj_event.getId_Parse(),util.isConnected());
-                                            ParseObject talkObject = proDAO.returnTalkParseObject(talk.getId(),util.isConnected());
-                                            if (talkObject != null) {
-                                                analitics.saveDataAnalitcsWithUser(ParseUser.getCurrentUser(), "Clicou", "Lista de Palestras", "O usuário clicou na palestra", eventObject,talkObject);
-                                            }
-                                        }
-                                    }catch (Exception e) {
-                                        Log.v("erro_parse_analitics",e.getMessage());
-                                    }
-                                }
-                            }.start();
 
                             return false;
                         }
@@ -449,25 +465,118 @@ public class Tab_EventDetail_Talk extends ActionBarActivity implements ActionBar
 
                     expandableListView.setGroupIndicator(getResources().getDrawable(R.drawable.icon_group));
 
-                    //mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view_programacao);
-                    //mRecyclerView.setHasFixedSize(true);
-                    //mLayoutManager = new LinearLayoutManager(rootView.getContext());
-                    //mRecyclerView.setLayoutManager(mLayoutManager);
-
-                    TextView txt_nome_evento = (TextView)view.findViewById(R.id.txt_detalhe_evento_nome);
+                    TextView txt_nome_evento = (TextView)viewtask.findViewById(R.id.txt_detalhe_evento_nome);
                     txt_nome_evento.setText(obj_event.getName());
 
-
-                    //mAdapter = new ProgramacaoAdapter(array_pro);
-                    //mRecyclerView.setAdapter(mAdapter);
                     progress.setVisibility(View.INVISIBLE);
 
+                    if(returnFirstAccess(obj_event.getId_Parse())) {
+                        save_preferences_json_event(obj_event.getId_Parse());
+                    }
+
+                    if(mSwipeRefreshLayout.isRefreshing()) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        Toast.makeText(viewtask.getContext(),"Programação Atualizada",Toast.LENGTH_SHORT).show();
+                    }
+                }
+            };
+            task.execute((Void[]) null);
+        }
+
+        public ArrayList<String> findLocally(Context ctx)  {
+
+            SharedPreferences prefs = ctx.getSharedPreferences("PreferencesEvent.json", Context.MODE_PRIVATE);
+            String jsonString = prefs.getString("json", "{}");
+            Log.v("pega_json_event", jsonString);
+
+            JSONObject json = null;
+            try {
+                json = new JSONObject(jsonString);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            JSONArray events = json.optJSONArray("events");
+
+            if (events == null) {
+                events = new JSONArray();
+            }
+
+            ArrayList<String> id = new ArrayList<String>();
+
+            for (int i = 0; i < events.length(); ++i) {
+                String objectId = events.optString(i);
+                id.add(objectId);
+            }
+
+            return id;
+        }
+
+        @Override
+        public void onRefresh() {
+            loadData(rootView, false);
+        }
+
+        private boolean returnFirstAccess(String id_parse) {
+
+            boolean first = true;
+
+            ArrayList<String> id = findLocally(rootView.getContext());
+
+            for(String id_event : id) {
+                if(id_event.equals(id_parse)) {
+                    first = false;
+                    break;
+                }
+            }
+            return first;
+        }
+
+        private void save_preferences_json_event(String event) {
+
+            final JSONObject json = toJSON(event);
+
+            new AsyncTask<Void, Void, Exception>() {
+                @Override
+                protected Exception doInBackground(Void... unused) {
+                    try {
+                        String jsonString = json.toString();
+                        SharedPreferences prefs = rootView.getContext().getSharedPreferences("PreferencesEvent.json", Context.MODE_PRIVATE);
+                        prefs.edit().putString("json", jsonString).commit();
+                    } catch (Exception e) {
+                        return e;
+                    }
+                    return null;
                 }
 
-            };
+                @Override
+                protected void onPostExecute(Exception error) {
+                    if (error != null) {
+                        Toast toast = Toast.makeText(rootView.getContext(), "Erro ao gravar as preferencias do evento: " + error.getMessage() +". Feche e abra a aplição.", Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
+            }.execute();
+        }
 
-            task.execute((Void[])null);
+        private JSONObject toJSON(String event) {
+            JSONArray events = new JSONArray();
+            ArrayList<String> id = new ArrayList<String>();
+            id = findLocally(rootView.getContext());
 
+            id.add(event);
+
+            for (String objectId : id) {
+                events.put(objectId);
+            }
+
+            JSONObject json = new JSONObject();
+            try {
+                json.put("events", events);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+            return json;
         }
 
     }

@@ -2,11 +2,7 @@ package br.com.makadu.makaduevento.UI;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -16,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
@@ -26,6 +21,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.localytics.android.Localytics;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -41,8 +37,8 @@ import br.com.makadu.makaduevento.DAOParse.QuestionDAO;
 import br.com.makadu.makaduevento.R;
 import br.com.makadu.makaduevento.Util.Email;
 import br.com.makadu.makaduevento.Util.Util;
+import br.com.makadu.makaduevento.Util.Question_talk;
 import br.com.makadu.makaduevento.adapters.TalkDetailExpandableAdapter;
-import br.com.makadu.makaduevento.adapters.TalkExpandableAdapter;
 import br.com.makadu.makaduevento.model.Speaker;
 import br.com.makadu.makaduevento.model.Talk;
 import br.com.makadu.makaduevento.model.Question;
@@ -64,14 +60,21 @@ public class TalkDetailActivity extends ActionBarActivity {
     Util util;
 
     @Override
+    protected void  onResume () {
+        super.onResume ();
+        Localytics.openSession();
+        Localytics.tagScreen ("Detalhe Programacao");
+        Localytics.upload ();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_talk_detail);
 
-        obj_prog = (Talk)getIntent().getSerializableExtra("id");
-
+        util = new Util(getBaseContext());
         progress = (ProgressBar) findViewById(R.id.progressBar_talk_detail);
+        obj_prog = (Talk)getIntent().getSerializableExtra("id");
 
         LinearLayout bt_download = (LinearLayout)findViewById(R.id.btn_detalhe_pro_Download);
 
@@ -96,12 +99,8 @@ public class TalkDetailActivity extends ActionBarActivity {
 
         ExpandableListView expandableListView = (ExpandableListView)findViewById(R.id.expandableListViewTalkAbout);
 
-        util = new Util(getBaseContext());
-
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-
-        TalkDAO proDAO = new TalkDAO();
 
         List<Talk> listTalk = new ArrayList<Talk>();
         listTalk.add(obj_prog);
@@ -112,7 +111,6 @@ public class TalkDetailActivity extends ActionBarActivity {
         return_speaker_loading();
 
         loaData();
-
 
         // GROUP
         listGroup.add("Sobre esta Atividade");
@@ -164,9 +162,8 @@ public class TalkDetailActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                Email email = new Email();
                 try {
-                    email.sendEmailConteudoProgramacao(v.getContext(), obj_prog);
+                    new Email().sendEmailConteudoProgramacao(v.getContext(), obj_prog);
                 } catch (Exception e) {
                     Toast.makeText(v.getContext(), "Ocorreu algum erro no DOWNLOAD!!!", Toast.LENGTH_LONG).show();
                 }
@@ -177,124 +174,17 @@ public class TalkDetailActivity extends ActionBarActivity {
         btn_Pergunta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                util.talk(v.getContext(),obj_prog.getId());
+                new Question_talk().question(v.getContext(), obj_prog.getId());
                 adapter.notifyDataSetChanged();
 
             }
         });
 
-        RatingBar rating = (RatingBar)findViewById(R.id.rating_inicial);
-
-        ParseQuery<ParseObject> pqprogram = ParseQuery.getQuery("Talks");
-        ParseObject program = new ParseObject("Talks");
-
-        try {
-            program = pqprogram.get(obj_prog.getId());
-            ParseQuery<ParseObject> query_rat = ParseQuery.getQuery("Rating");
-            query_rat.whereEqualTo("talk", program);
-            query_rat.orderByAscending("createdAt");
-            query_rat.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
-
-            int rat_int = 0;
-            List<ParseObject> list_PO_Rating = null;
-            if(util.isConnected()) {
-                list_PO_Rating = query_rat.find();
-
-                for(ParseObject ra : list_PO_Rating ) {
-                    rat_int = (Integer) ra.get("note");
-                }
-            }
-
-            rating.setRating(rat_int);
-
-        } catch (ParseException e) {
-            Log.d("erro_rating",e.getMessage());
-        }
-
-        final ParseObject finalProgram = program;
-        rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-
-            @Override
-            public void onRatingChanged(RatingBar ratingBar_on, float rating, boolean fromUser) {
-                LayoutInflater inflater = LayoutInflater.from(TalkDetailActivity.this);
-                AlertDialog.Builder alert = new AlertDialog.Builder(TalkDetailActivity.this);
-                alert.setTitle(null);
-                View alert_ratingView = inflater.inflate(R.layout.alert_rating,null,false);
-
-                TextView txtAvaliacao = (TextView)alert_ratingView.findViewById(R.id.txt_avalie_essa_palestra);
-                txtAvaliacao.setText("Avaliacão de " + ParseUser.getCurrentUser().get("full_name"));
-
-                final EditText edtDescricao = (EditText)alert_ratingView.findViewById(R.id.edt_Descricao_rating);
-
-                final RatingBar ratingBar = (RatingBar) alert_ratingView.findViewById(R.id.ratingBar_rating);
-
-                ratingBar.setRating(rating);
-                alert.setView(alert_ratingView);
-                alert.create();
-                alert.setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        AsyncTask<Void, Void, Void> ratingTask = new AsyncTask<Void, Void, Void>() {
-
-                            boolean ok = true;
-
-                            @Override
-                            protected void onPreExecute() {
-                                pd = new ProgressDialog(TalkDetailActivity.this);
-                                pd.setTitle("Avaliando Palestra");
-                                pd.setMessage("Carregando...");
-                                pd.setCancelable(false);
-                                pd.setIndeterminate(true);
-                                pd.show();
-                            }
-
-                            @Override
-                            protected Void doInBackground(Void... arg0) {
-
-                                try {
-
-                                    ParseObject rating = new ParseObject("Rating");
-
-                                    rating.put("note", ratingBar.getRating());
-                                    rating.put("user", ParseUser.getCurrentUser());
-                                    rating.put("talk", finalProgram);
-                                    rating.put("description", edtDescricao.getText().toString());
-                                    rating.saveInBackground();
-
-                                } catch (Exception e) {
-                                    ok = false;
-                                }
-
-                                return null;
-                            }
-
-                            @Override
-                            protected void onPostExecute(Void result) {
-                                if (pd != null) {
-
-                                    if (ok) {
-                                        Toast.makeText(TalkDetailActivity.this, "Avaliacao Efetuada \n" + "Nota: " + ratingBar.getRating(), Toast.LENGTH_LONG).show();
-                                    } else {
-                                        Toast.makeText(TalkDetailActivity.this, "Sem conexão com a internet, tente fazer a pergunta novamente mais tarde.", Toast.LENGTH_LONG).show();
-                                    }
-
-                                    pd.dismiss();
-                                }
-                            }
-                        };
-
-                        ratingTask.execute((Void[]) null);
-                    }
-                });
-                alert.show();
-            }
-        });
+        loadRating();
 
     }
 
-    public void loaData() {
+    private void loaData() {
 
         AsyncTask<Void, Void, Void> taskSpeaker = new AsyncTask<Void, Void, Void>() {
 
@@ -356,58 +246,156 @@ public class TalkDetailActivity extends ActionBarActivity {
                 progress.setVisibility(View.INVISIBLE);
                 adapter.notifyDataSetChanged();
             }
-
         };
 
         if(util.isConnected()) {
             taskSpeaker.execute((Void[]) null);
             taskQuestion.execute((Void[]) null);
         }
+    }
 
+    private void loadRating() {
+        RatingBar rating = (RatingBar)findViewById(R.id.rating_inicial);
+        /*
+        ParseQuery<ParseObject> pqprogram = ParseQuery.getQuery("Talks");
+        ParseObject program = new ParseObject("Talks");
+
+        try {
+            program = pqprogram.get(obj_prog.getId());
+            ParseQuery<ParseObject> query_rat = ParseQuery.getQuery("Rating");
+            query_rat.whereEqualTo("talk", program);
+            query_rat.whereEqualTo("user",ParseUser.getCurrentUser());
+            query_rat.orderByAscending("createdAt");
+            query_rat.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
+
+            int rat_int = 0;
+            List<ParseObject> list_PO_Rating = null;
+            if(util.isConnected()) {
+                list_PO_Rating = query_rat.find();
+
+                for(ParseObject ra : list_PO_Rating ) {
+                    rat_int = (Integer) ra.get("note");
+                }
+            }
+
+            rating.setRating(rat_int);
+
+        } catch (ParseException e) {
+            Log.d("erro_rating",e.getMessage());
+        }
+
+        final ParseObject finalProgram = program;
+        */
+        rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+
+            @Override
+            public void onRatingChanged(RatingBar ratingBar_on, float rating, boolean fromUser) {
+                LayoutInflater inflater = LayoutInflater.from(TalkDetailActivity.this);
+                AlertDialog.Builder alert = new AlertDialog.Builder(TalkDetailActivity.this);
+                alert.setTitle(null);
+                View alert_ratingView = inflater.inflate(R.layout.alert_rating,null,false);
+
+                TextView txtAvaliacao = (TextView)alert_ratingView.findViewById(R.id.txt_avalie_essa_palestra);
+                txtAvaliacao.setText("Avaliacão de " + ParseUser.getCurrentUser().get("full_name"));
+
+                final EditText edtDescricao = (EditText)alert_ratingView.findViewById(R.id.edt_Descricao_rating);
+
+                final RatingBar ratingBar = (RatingBar) alert_ratingView.findViewById(R.id.ratingBar_rating);
+
+                ratingBar.setRating(rating);
+                alert.setView(alert_ratingView);
+                alert.create();
+                alert.setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        AsyncTask<Void, Void, Void> ratingTask = new AsyncTask<Void, Void, Void>() {
+
+                            boolean ok = true;
+
+                            @Override
+                            protected void onPreExecute() {
+                                pd = new ProgressDialog(TalkDetailActivity.this);
+                                pd.setTitle("Avaliando Palestra");
+                                pd.setMessage("Carregando...");
+                                pd.setCancelable(false);
+                                pd.setIndeterminate(true);
+                                pd.show();
+                            }
+
+                            @Override
+                            protected Void doInBackground(Void... arg0) {
+                                try {
+                                    ParseObject rating = new ParseObject("Rating");
+                                    ParseObject program = new ParseObject("Talks");
+                                    ParseQuery<ParseObject> pqprogram = ParseQuery.getQuery("Talks");
+                                    program = pqprogram.get(obj_prog.getId());
+
+                                    rating.put("note", ratingBar.getRating());
+                                    rating.put("user", ParseUser.getCurrentUser());
+                                    rating.put("talk", program);
+                                    rating.put("description", edtDescricao.getText().toString());
+                                    rating.saveInBackground();
+
+                                } catch (Exception e) {
+                                    ok = false;
+                                }
+
+                                return null;
+                            }
+
+                            @Override
+                            protected void onPostExecute(Void result) {
+                                if (pd != null) {
+
+                                    if (ok) {
+                                        Toast.makeText(TalkDetailActivity.this, "Avaliacao Efetuada \n" + "Nota: " + ratingBar.getRating(), Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(TalkDetailActivity.this, "Sem conexão com a internet, tente fazer a pergunta novamente mais tarde.", Toast.LENGTH_LONG).show();
+                                    }
+
+                                    pd.dismiss();
+                                }
+                            }
+                        };
+
+                        ratingTask.execute((Void[]) null);
+                    }
+                });
+                alert.show();
+            }
+        });
     }
 
     private void return_speaker_loading() {
-
         Speaker speaker = new Speaker("0","Carregando...","carregando Palestrante");
         List<Speaker> list_speaker = new ArrayList<Speaker>();
-
         list_speaker.add(speaker);
-
         listDataPalestrante.put("Palestrante", list_speaker);
-
     }
 
     private void return_question_loading() {
         Date date = new Date(System.currentTimeMillis());
         Question question = new Question("0","Carregando...","carregando pergunta",date);
         List<Question> list_questions = new ArrayList<Question>();
-
         list_questions.add(question);
-
         listDataQuestion.put("Perguntas", list_questions);
-
     }
 
     private void return_no_speaker() {
-
         Speaker speaker = new Speaker("0","Palestrante à definir","");
         List<Speaker> list_speaker = new ArrayList<Speaker>();
         list_speaker.add(speaker);
-
         listDataPalestrante.put("Palestrante", list_speaker);
-
     }
 
     private void return_no_question() {
-
         Date date = new Date(System.currentTimeMillis());
         Question question = new Question("0","Sem Perguntas até o momento","Verificacao às",date);
         List<Question> list_quastion = new ArrayList<Question>();
-
         list_quastion.add(question);
-
         listDataQuestion.put("Perguntas", list_quastion);
-
     }
 
     @Override
@@ -416,7 +404,6 @@ public class TalkDetailActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.menu_talk_detail, menu);
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -431,7 +418,6 @@ public class TalkDetailActivity extends ActionBarActivity {
             loaData();
             return true;
         }
-
 
         return super.onOptionsItemSelected(item);
     }

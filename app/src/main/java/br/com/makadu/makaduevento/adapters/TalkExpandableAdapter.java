@@ -5,9 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,13 +14,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.locks.ReentrantLock;
 
 import br.com.makadu.makaduevento.R;
 import br.com.makadu.makaduevento.Util.Email;
-import br.com.makadu.makaduevento.Util.Util;
+import br.com.makadu.makaduevento.Util.Question_talk;
 import br.com.makadu.makaduevento.model.Favorites;
 import br.com.makadu.makaduevento.model.Talk;
 
@@ -114,7 +109,6 @@ public class TalkExpandableAdapter extends BaseExpandableListAdapter {
             holder.local = (TextView)convertView.findViewById(R.id.txt_Local_programacao);
             holder.palestrantes = (TextView)convertView.findViewById(R.id.txt_Palestrante_programacao);
             holder.favorite = (ImageView)convertView.findViewById(R.id.img_star_favoritar);
-            holder.txt_favorite = (TextView)convertView.findViewById(R.id.txt_favorite_talk);
 
             holder.linear_download = (LinearLayout)convertView.findViewById(R.id.linear_download_programacao);
             holder.linear_question = (LinearLayout)convertView.findViewById(R.id.linear_pergunta_programacao);
@@ -131,9 +125,8 @@ public class TalkExpandableAdapter extends BaseExpandableListAdapter {
         holder.linear_download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Email email = new Email();
                 try {
-                    email.sendEmailConteudoProgramacao(v.getContext(), val);
+                    new Email().sendEmailConteudoProgramacao(v.getContext(), val);
                 }catch (Exception e){
                     Toast.makeText(v.getContext(),"Ocorreu algum erro no DOWNLOAD!!!",Toast.LENGTH_LONG).show();
                 }
@@ -143,8 +136,7 @@ public class TalkExpandableAdapter extends BaseExpandableListAdapter {
         holder.linear_question.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util util = new Util();
-                util.talk(v.getContext(), val.getId());
+                 new Question_talk().question(v.getContext(), val.getId());
             }
         });
 
@@ -152,21 +144,17 @@ public class TalkExpandableAdapter extends BaseExpandableListAdapter {
 
         if (favorites.contains(val)) {
             holder.favorite.setImageResource(android.R.drawable.star_big_on);
-            holder.txt_favorite.setText("Favorito");
         } else {
             holder.favorite.setImageResource(android.R.drawable.btn_star_big_off);
-            holder.txt_favorite.setText("Favoritar");
         }
 
         favoriteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (favorites.contains(val)) {
                     holder.favorite.setImageResource(android.R.drawable.btn_star_big_off);
-                    holder.txt_favorite.setText("Favoritar");
                     favorites.remove((Talk)val);
                 } else {
                     holder.favorite.setImageResource(android.R.drawable.star_big_on);
-                    holder.txt_favorite.setText("Favorito");
                     favorites.add((Talk)val);
                 }
             }
@@ -210,7 +198,6 @@ public class TalkExpandableAdapter extends BaseExpandableListAdapter {
         TextView local;
         TextView palestrantes;
         ImageView favorite;
-        TextView txt_favorite;
         LinearLayout linear_download;
         LinearLayout linear_question;
         LinearLayout linear_favorite;

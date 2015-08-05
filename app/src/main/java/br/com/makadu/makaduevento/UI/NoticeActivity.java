@@ -11,6 +11,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.localytics.android.Localytics;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,14 @@ public class NoticeActivity extends ActionBarActivity {
     TextView txt_notification;
     NoticeDAO nDAO = new NoticeDAO();
     String id;
+
+    @Override
+    protected void  onResume () {
+        super.onResume ();
+        Localytics.openSession();
+        Localytics.tagScreen ("Notificacao");
+        Localytics.upload ();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

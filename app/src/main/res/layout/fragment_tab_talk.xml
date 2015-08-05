@@ -8,7 +8,6 @@
     android:layout_marginRight="5dp"
     tools:context="br.com.makadu.makaduevento.UI.Tab_EventDetail_Talk$PlaceholderFragment">
 
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -34,7 +33,8 @@
             android:layout_below="@id/txt_detalhe_evento_nome"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-           >
+            >
+
             <ProgressBar
                 android:id="@+id/progressBar_talk"
                 style="?android:attr/progressBarStyleLarge"
@@ -43,26 +43,21 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:visibility="invisible" />
-            <!--<android.support.v4.widget.SwipeRefreshLayout
-                android:id="@+id/swipeLoadingTalk"
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipeLoading_Talk"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">-->
-            <ExpandableListView
-                android:id="@+id/expandableListViewTalk"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-             />
-            <!--</android.support.v4.widget.SwipeRefreshLayout>-->
-            <!--<android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_view_programacao"
-                android:scrollbars="vertical"
-                android:paddingTop="1dp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>-->
+                android:layout_height="match_parent">
+
+                <ExpandableListView
+                    android:id="@+id/expandableListViewTalk"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+         </android.support.v4.widget.SwipeRefreshLayout>
 
         </RelativeLayout>
 
     </RelativeLayout>
-
 
 </RelativeLayout>

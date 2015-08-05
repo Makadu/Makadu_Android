@@ -28,6 +28,7 @@ public class TalkDAO {
 
     public List<Talk> returnProgramacaoList(String event, final boolean isConnected, boolean isCache,boolean isFavorite, Context ctx) throws ParseException {
 
+        Log.v("inicio_programacao","entou inicio");
         Favorites favorites;
         ArrayList<String> arraylist_objectid = null;
 
@@ -43,12 +44,16 @@ public class TalkDAO {
         final ParseQuery<ParseObject> evento = ParseQuery.getQuery("Events");
 
         if(isCache) {
+            Log.v("hascache","inicio cache");
             evento.setCachePolicy(ParseQuery.CachePolicy.CACHE_ONLY);
+            Log.v("hascache", "inicio cache depois");
         } else {
             if (!isConnected) {
                 evento.setCachePolicy(ParseQuery.CachePolicy.CACHE_ONLY);
             } else {
+                Log.v("hascache","antes");
                 if (evento.hasCachedResult()) {
+                    Log.v("hascache","entrou hascache");
                     evento.setCachePolicy(ParseQuery.CachePolicy.CACHE_ONLY);
                     evento.setMaxCacheAge(10);
 
@@ -56,6 +61,7 @@ public class TalkDAO {
                     evento.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
                     evento.setMaxCacheAge(10);
                 }
+                Log.v("hascache","depois");
             }
         }
 
@@ -64,7 +70,7 @@ public class TalkDAO {
         try {
             ev = evento.get(event);
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.v("hascache","ParseException " + e.getMessage());
         }
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Talks");
         if(isCache) {
@@ -133,10 +139,8 @@ public class TalkDAO {
                         querySpeaker.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
                         querySpeaker.setMaxCacheAge(10);
                     }
-
                 }
             }
-            //List<ParseObject> list_PO_Palestrante = queryPalestrante.find();
             querySpeaker.findInBackground(new FindCallback<ParseObject>() {
                 @Override
                 public void done(List<ParseObject> palestrantelist, ParseException e) {

@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
 
+import com.localytics.android.Localytics;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -19,7 +20,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import br.com.makadu.makaduevento.DAOParse.AnalitcsDAO;
 import br.com.makadu.makaduevento.DAOParse.EventDAO;
 import br.com.makadu.makaduevento.DAOParse.TalkDAO;
 import br.com.makadu.makaduevento.R;
@@ -35,21 +35,26 @@ public class FavoriteActivity extends ActionBarActivity {
     TalkExpandableAdapter adapter = null;
     TalkDAO proDAO = new TalkDAO();
     EventDAO eventDAO = new EventDAO();
-    AnalitcsDAO analitics;
     Event obj_event;
     Util util;
     Context ctx;
+
+    @Override
+    protected void  onResume () {
+        super.onResume ();
+        Localytics.openSession();
+        Localytics.tagScreen ("Favorito");
+        Localytics.upload ();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite);
 
-        Log.v("erro_LOG","Passou");
         obj_event = (Event)getIntent().getSerializableExtra("obj_evento");
 
         util = new Util(getBaseContext());
-        analitics = new AnalitcsDAO();
         progress = (ProgressBar) findViewById(R.id.progressBar_favorite);
 
         ctx = getBaseContext();
@@ -70,7 +75,6 @@ public class FavoriteActivity extends ActionBarActivity {
             @Override
             protected ArrayList<Talk> doInBackground(Void... arg0) {
 
-                Log.v("conectado", util.isConnected() + "");
                 try {
                     array_pro = (ArrayList<Talk>) proDAO.returnProgramacaoList(obj_event.getId_Parse(), util.isConnected(),false,true,getBaseContext());
                 } catch (ParseException e) {
@@ -104,23 +108,6 @@ public class FavoriteActivity extends ActionBarActivity {
                             Intent intent = new Intent(v.getContext(), TalkDetailActivity.class);
                             intent.putExtra("id", talk);
                             v.getContext().startActivity(intent);
-
-                            new Thread() {
-                                public void run() {
-                                    try {
-                                        if (util.isConnected()) {
-                                            ParseObject eventObject = eventDAO.returnEvent(obj_event.getId_Parse(), util.isConnected());
-                                            ParseObject talkObject = proDAO.returnTalkParseObject(talk.getId(), util.isConnected());
-                                            if (talkObject != null) {
-                                                analitics.saveDataAnalitcsWithUser(ParseUser.getCurrentUser(), "Clicou", "Lista de Palestras", "O usuário clicou na palestra", eventObject, talkObject);
-                                            }
-                                        }
-                                    } catch (Exception e) {
-                                        Log.v("erro_parse_analitics", e.getMessage());
-                                    }
-                                }
-
-                            }.start();
 
                             return false;
                         }
