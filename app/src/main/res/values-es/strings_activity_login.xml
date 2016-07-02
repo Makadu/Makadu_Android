@@ -1,0 +1,17 @@
+<resources>
+    <string name="title_activity_login">Login</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">E-mail</string>
+    <string name="prompt_password">Contraseña</string>
+    <string name="action_sign_in">LOG IN</string>
+    <string name="action_create_account">Regístrese</string>
+    <string name="recupera_senha">¿Olvidó su contraseña?</string>
+    <string name="action_sign_in_short">Login</string>
+    <string name="action_name_account">Nombre</string>
+    <string name="error_invalid_email">Ops... El email que ingresó no es válido</string>
+    <string name="error_invalid_password">Su contraseña es demasiado corta. Intente uno más largo</string>
+    <string name="error_incorrect_password">Contraseña o email incorrectos</string>
+    <string name="error_incorrect_username">De usuario no registrado.</string>
+    <string name="error_field_required">Este es un campo requerido</string>
+</resources>

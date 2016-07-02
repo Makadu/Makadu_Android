@@ -1,0 +1,50 @@
+<resources>
+
+    <string name="app_name">Makadu</string>
+    <string name="app_aviso">Announcements</string>
+    <string name="action_perfil">Profile</string>
+    <string name="action_settings">Configurations</string>
+    <string name="title_meusEventos">My Events</string>
+    <string name="title_activity_tab">Makadu</string>
+    <string name="title_todos">Events</string>
+    <string name="title_section1">Event</string>
+    <string name="title_section2">Schedule</string>
+    <string name="title_activity_tab__detalhe__main">Makadu</string>
+    <string name="aviso_email">Você receberá os slides nesse email. Se você não quiser usar seu email verdadeiro não tem problema, mas você não receberá os materiais que solicitar.</string>
+    <string name="row_interactive">Interativa</string>
+    <string name="sent_email_when_available">The material will be sent to your e-mail when available.</string>
+    <string name="submit">Submit</string>
+    <string name="cancel">Cancel</string>
+    <string name="envie_perg">Send a question!</string>
+    <string name="title_section3">Scientific Work</string>
+    <string name="title_activity_detalhe__evento">Event details</string>
+    <string name="title_activity_tab__detalhe__evento">Details</string>
+    <string name="action_search">Search...</string>
+    <string name="action_notification">Notification</string>
+    <string name="title_activity_detalhe__programacao">Schedule Details</string>
+    <string name="title_activity_exemplo__notificacao">Notification</string>
+    <string name="encaminha_download_pergunta">Click on the activity for which you  like to send a question or download slides on the SCHEDULE tab!</string>
+    <string name="download_efetuado_sucesso">The activity material was succesfully sent to your e-mail</string>
+    <string name="pergunta_enviada_sucesso">Your question was succesfully sent. Thank you!</string>
+    <string name="rating">Rating received succesfully!</string>
+    <string name="row_questioning">Ask Question</string>
+    <string name="activity_loading_talk">Please wait while we load the complete schedule...</string>
+    <string name="add_my_events">Adicionar Evento em Meus Eventos</string>
+    <string name="remove_my_events">Remover Evento de Meus Eventos</string>
+    <string name="password_to">Enter event password. If you don\'t have it, contact the event organizers</string>
+    <string name="send_question">Send a Question</string>
+    <string name="no_internet">Identificamos que voçê não está conectado na Internet ou não está navegando. Verifique e Tente novamente.</string>
+    <string name="exception_internet">Ocorreu Algum Problema com a Internet.</string>
+    <string name="about_activity">Sobre a Atividade</string>
+    <string name="about_Speaker">Sobre o Palestrante</string>
+    <string name="success_event">Successfully added event</string>
+
+    <string name="title_activity_notification">Notificações</string>
+    <string name="title_activity_sponsor_screen">Patrocinador</string>
+    <string name="title_activity_favorite">Favoritos</string>
+    <string name="title_activity_tab__events__primary">Tab_Events_Primary</string>
+    <string name="title_activity_before_vote">BeforeVote</string>
+    <string name="title_activity_interactive_voting">InteractiveVoting</string>
+    <string name="title_activity_evaluation">Evaluation</string>
+
+</resources>

@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -27,17 +28,31 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.localytics.android.Localytics;
-import com.parse.LogInCallback;
-import com.parse.ParseException;
-import com.parse.ParseUser;
-import com.parse.RequestPasswordResetCallback;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.makadu.makaduevento.R;
+import br.com.makadu.makaduevento.Util.SessionManager;
 import br.com.makadu.makaduevento.Util.Util;
+import br.com.makadu.makaduevento.model.RequestJson;
+import br.com.makadu.makaduevento.model.ResponseJson;
+import br.com.makadu.makaduevento.model.User;
+import br.com.makadu.makaduevento.servicesRetrofit.methodService.MakaduAPI;
+import br.com.makadu.makaduevento.servicesRetrofit.returnAPI.GetRestAdapter;
+import br.com.makadu.makaduevento.servicesRetrofit.returnAPI.PostRestAdapter;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
@@ -48,22 +63,30 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private SessionManager session;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
-    protected void  onResume () {
-        super.onResume ();
+    protected void onResume() {
+        super.onResume();
         Localytics.openSession();
-        Localytics.tagScreen ("Login");
-        Localytics.upload ();
+        Localytics.tagScreen("Login");
+        Localytics.upload();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        client.connect();
 
-        if(ParseUser.getCurrentUser() != null) {
-            Log.d("UserIni","onCreate, got user, " + ParseUser.getCurrentUser().getUsername());
-            startActivity(new Intent(this,EventActivity.class));
+        session = new SessionManager(getApplicationContext());
+
+        if (session.isLoggedIn()) {
+            startActivity(new Intent(this, Tab_Main.class));
             finish();
         }
     }
@@ -88,20 +111,20 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                     attemptLogin();
                     return true;
                 } else {
-                    return  false;
+                    return false;
                 }
 
             }
         });
 
-        Button cadastro = (Button)findViewById(R.id.btn_cadastrese);
+        TextView cadastro = (TextView) findViewById(R.id.btn_cadastrese);
         cadastro.setClickable(true);
         cadastro.setFocusable(true);
 
         cadastro.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent it = new Intent(v.getContext(),CreateAccountActivity.class);
+                Intent it = new Intent(v.getContext(), CreateAccountActivity.class);
                 startActivity(it);
                 finish();
             }
@@ -115,46 +138,61 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             }
         });
 
-        TextView txt_esqueci = (TextView)findViewById(R.id.txt_esquequi_senha);
+        TextView txt_esqueci = (TextView) findViewById(R.id.txt_esqueci_senha);
 
         txt_esqueci.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(final View v) {
                 try {
 
-                    final EditText edt_email = new EditText(v.getContext());
+                    EditText edt_email_base = new EditText(v.getContext());
+                    edt_email_base.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+                    final EditText edt_email = edt_email_base;
+
 
                     AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
                     alert.setMessage("Digite Seu Email cadastrado para recuperar a senha!");
                     alert.setView(edt_email);
-                    alert.setPositiveButton("Enviar Email!",new DialogInterface.OnClickListener() {
+                    alert.setPositiveButton("Enviar Email!", new DialogInterface.OnClickListener() {
 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            ParseUser.requestPasswordResetInBackground(edt_email.getText().toString(),
-                                    new RequestPasswordResetCallback() {
-                                        @Override
-                                        public void done(ParseException e) {
-                                            if(e ==null){
-                                                Toast.makeText(v.getContext(),"Confira seu email para alterar sua senha!!!",Toast.LENGTH_LONG).show();
-                                            } else {
-                                                Toast.makeText(v.getContext(),"E-mail não cadastrado!!!",Toast.LENGTH_LONG).show();
-                                            }
-                                        }
-                                    });
+                            RequestJson request = new RequestJson(edt_email.getText().toString());
+
+                            retrofit.Call<ResponseJson> json = null;
+                            try {
+                                json = new PostRestAdapter().recovery(request);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            json.enqueue(new Callback<ResponseJson>() {
+                                @Override
+                                public void onResponse(Response<ResponseJson> response, Retrofit retrofit) {
+                                    Toast.makeText(LoginActivity.this,"Confira seu email para alterar sua senha!!!",Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onFailure(Throwable t) {
+                                    Toast.makeText(LoginActivity.this,"E-mail não cadastrado!!!",Toast.LENGTH_LONG).show();
+                                }
+                            });
                         }
                     });
 
                     alert.show();
 
-                }catch (Exception e){
-                    Toast.makeText(v.getContext(),"Ocorreu Algum erro. Tente Novamente!!!",Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    Toast.makeText(v.getContext(), "Ocorreu Algum erro. Tente Novamente!!!", Toast.LENGTH_LONG).show();
                 }
             }
         });
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     private void limpauserlogin() {
@@ -168,11 +206,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
 
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
     public void attemptLogin() {
 
         // Reset errors.
@@ -194,14 +227,14 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             cancel = true;
         }
 
-        if (TextUtils.isEmpty(password) ) {
+        if (TextUtils.isEmpty(password)) {
             mPasswordView.setError(getString(R.string.error_field_required));
             focusView = mPasswordView;
             cancel = true;
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(email) ) {
+        if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
@@ -215,27 +248,17 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             focusView.requestFocus();
         } else {
 
-            showProgress(true);
-            //mAuthTask = new UserLoginTask(email, password);
-            //mAuthTask.execute((Void) null);
-            ParseUser.logInInBackground(email, password, new LogInCallback() {
-
-                @Override
-                public void done(ParseUser user, ParseException e) {
-
-                    if (user != null) {
-                        Intent intent = new Intent(LoginActivity.this, EventActivity.class);
-                        startActivity(intent);
-                        limpauserlogin();
-                        finish();
-                    } else {
-                        Log.d("userlogin", e.getMessage());
-                        Toast.makeText(LoginActivity.this, "Usuário ou senha inválidos!!!", Toast.LENGTH_LONG).show();
-                    }
-                    showProgress(false);
+            if(new Util(this).isConnected()) {
+                try{
+                    showProgress(true);
+                    mAuthTask = new UserLoginTask(email, password);
+                    mAuthTask.execute((Void) null);
+                }catch (Exception e) {
+                    Toast.makeText(this,getString(R.string.exception_internet),Toast.LENGTH_LONG).show();
                 }
-            });
-
+            } else {
+               Toast.makeText(this,getString(R.string.no_internet),Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -284,7 +307,14 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) { }
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+    }
 
     private interface ProfileQuery {
         String[] PROJECTION = {
@@ -298,7 +328,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
+        //Create adapterTalk to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<String>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
@@ -306,7 +336,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         mEmailView.setAdapter(adapter);
     }
 
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, User> {
 
         private final String mEmail;
         private final String mPassword;
@@ -317,25 +347,42 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-            return true;
+        protected User doInBackground(Void... params) {
+
+            User user = new User();
+            boolean ok = false;
+            try {
+                user = new PostRestAdapter().login(mEmail, mPassword);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return user;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final User user) {
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
-                Intent intent = new Intent(LoginActivity.this, EventActivity.class);
+            try{
 
-                intent.getIntExtra("id_user",1);
-
-                startActivity(intent);
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                if (user.data) {
+                    session.setLogin(true,user.user_id,mEmail);
+                    Intent intent = new Intent(LoginActivity.this, Tab_Main.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    if(user.user_id.equals("nao registrado")) {
+                        mEmailView.setError(getString(R.string.error_incorrect_username));
+                        mEmailView.requestFocus();
+                    } else{
+                        mPasswordView.setError(getString(R.string.error_incorrect_password));
+                        mPasswordView.requestFocus();
+                    }
+                }
+            }catch (Exception e) {
+                Toast.makeText(LoginActivity.this,"correu algum problema com a autenticacao ou você está sem internet", Toast.LENGTH_LONG).show();
             }
         }
 

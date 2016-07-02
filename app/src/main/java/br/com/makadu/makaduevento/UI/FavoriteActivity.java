@@ -9,33 +9,35 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.localytics.android.Localytics;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseUser;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import br.com.makadu.makaduevento.DAOParse.EventDAO;
-import br.com.makadu.makaduevento.DAOParse.TalkDAO;
+import br.com.makadu.makaduevento.DAO.dao.entityDao.TalkDao;
 import br.com.makadu.makaduevento.R;
 import br.com.makadu.makaduevento.Util.Util;
 import br.com.makadu.makaduevento.adapters.TalkExpandableAdapter;
 import br.com.makadu.makaduevento.model.Event;
+import br.com.makadu.makaduevento.model.Favorites;
 import br.com.makadu.makaduevento.model.Talk;
+import br.com.makadu.makaduevento.servicesRetrofit.returnAPI.GetRestAdapter;
 
 public class FavoriteActivity extends ActionBarActivity {
 
     ProgressBar progress;
     ArrayList<Talk> array_pro;
+    List<Talk> lista_talk = null;
     TalkExpandableAdapter adapter = null;
-    TalkDAO proDAO = new TalkDAO();
-    EventDAO eventDAO = new EventDAO();
     Event obj_event;
+    TextView txt_favorite_not;
     Util util;
     Context ctx;
 
@@ -44,7 +46,7 @@ public class FavoriteActivity extends ActionBarActivity {
         super.onResume ();
         Localytics.openSession();
         Localytics.tagScreen ("Favorito");
-        Localytics.upload ();
+        Localytics.upload();
     }
 
     @Override
@@ -56,6 +58,7 @@ public class FavoriteActivity extends ActionBarActivity {
 
         util = new Util(getBaseContext());
         progress = (ProgressBar) findViewById(R.id.progressBar_favorite);
+        txt_favorite_not = (TextView)findViewById(R.id.txt_favorite_not);
 
         ctx = getBaseContext();
 
@@ -75,13 +78,35 @@ public class FavoriteActivity extends ActionBarActivity {
             @Override
             protected ArrayList<Talk> doInBackground(Void... arg0) {
 
+                TalkDao tDAO = new TalkDao(getApplicationContext());
+
                 try {
-                    array_pro = (ArrayList<Talk>) proDAO.returnProgramacaoList(obj_event.getId_Parse(), util.isConnected(),false,true,getBaseContext());
-                } catch (ParseException e) {
+                    //array_pro = (ArrayList<Talk>) new GetRestAdapter().returnAllTalks(obj_event.getId());
+                    Log.v("LOG_EVENT", "Evento: " + obj_event.id);
+                    array_pro = (ArrayList<Talk>) tDAO.getListTalkForEventIdTAB_TALK(Long.parseLong(obj_event.id));
+
+                    lista_talk = new ArrayList<Talk>();
+
+                    Favorites favorites;
+                    ArrayList<String> arraylist_objectid = null;
+
+                    Log.v("log_talk","isFavorite");
+                    favorites = new Favorites(ctx);
+                    arraylist_objectid = new ArrayList<String>();
+                    arraylist_objectid = favorites.findLocally(ctx);
+
+                    for(Talk t : array_pro) {
+
+                        if(arraylist_objectid.contains(t.getId())) {
+                            lista_talk.add(t);
+                        }
+                    }
+
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                return array_pro;
+                return (ArrayList<Talk>) lista_talk;
             }
 
             @Override
@@ -107,6 +132,7 @@ public class FavoriteActivity extends ActionBarActivity {
 
                             Intent intent = new Intent(v.getContext(), TalkDetailActivity.class);
                             intent.putExtra("id", talk);
+                            intent.putExtra("event_id",obj_event.getId());
                             v.getContext().startActivity(intent);
 
                             return false;
@@ -128,6 +154,10 @@ public class FavoriteActivity extends ActionBarActivity {
 
                 }
                 progress.setVisibility(View.INVISIBLE);
+                if(array_pro_async.isEmpty())
+                    txt_favorite_not.setVisibility(View.VISIBLE);
+                else
+                    txt_favorite_not.setVisibility(View.INVISIBLE);
             }
 
         };
@@ -147,6 +177,13 @@ public class FavoriteActivity extends ActionBarActivity {
         String dataAux="";
         boolean gruponovo = true;
         Date grupo_data = new Date();
+
+        Collections.sort(array_pro, new Comparator<Talk>() {
+            @Override
+            public int compare(Talk t1, Talk t2) {
+                return t1.getData().compareTo(t2.getData());
+            }
+        });
 
         for(Talk prod_gru : array_pro) {
 
@@ -178,7 +215,7 @@ public class FavoriteActivity extends ActionBarActivity {
         }
 
         if(update)
-            adapter = new TalkExpandableAdapter(ctx, listGroup, listData, (ArrayList<Talk>) array_pro);
+            adapter = new TalkExpandableAdapter(ctx, listGroup, listData, (ArrayList<Talk>) array_pro, obj_event.getId(), "");
         else
             adapter.setData(array_pro,listGroup,listData);
     }

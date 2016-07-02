@@ -1,6 +1,18 @@
 package br.com.makadu.makaduevento.model;
 
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Log;
+
+import com.squareup.picasso.Picasso;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.Date;
+
+import br.com.makadu.makaduevento.Util.Util;
 
 /**
  * Created by lucasschwalbeferreira on 05/02/15.
@@ -8,51 +20,67 @@ import java.io.Serializable;
 
 public class Event implements Serializable {
 
-    private String id_parse;
-    private String name;
-    private String description;
-    private String local;
-    private String address;
-    private String city;
-    private String state;
-    private String start_date;
-    private String end_date;
-    private byte[] file_img_event;
-    private byte[] file_img_patronage;
+    // JSON RETROFIT
+    public String id;
+    public String title;
+    public String description;
+    public String address;
+    public String venue;
+    public String city;
+    public String logo;
+    public String logo_medium;
+    public String state;
+    public String start_date;
+    public String end_date;
+    public boolean active;
+    public String event_type;
+    public String password;
+    public boolean have_papers;
+
+    public String resposta;
+    public String erro;
+
+    //private  boolean active;
+    public Date updated_at;
 
 
-    public Event(String id, String name, String description, String local, String address, String city, String state, String start_date, String end_date, byte[] file_img_event) {
-        this.id_parse = id;
-        this.name = name;
+    private byte[] img_logo;
+
+
+    public Event(String id, String title, String description, String venue, String address, String city, String state, String start_date, String end_date) {
+        this.id = id;
+        this.title = title;
         this.description = description;
-        this.local = local;
+        this.venue = venue;
         this.address = address;
         this.city = city;
         this.state = state;
         this.start_date = start_date;
         this.end_date = end_date;
-        this.file_img_event = file_img_event;
     }
 
     public Event(){};
 
-    public String getId_Parse() {
-        return id_parse;
+    public String getId() {
+        return id;
     }
 
     public void setId(String id) {
-        this.id_parse = id;
+        this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String name) {
+        this.title = name;
     }
 
     public String getDescription() {
+        if(this.description == null)
+            this.description = "";
+
         return description;
     }
 
@@ -60,16 +88,20 @@ public class Event implements Serializable {
         this.description = description;
     }
 
-    public String getLocal() {
-        return local;
+    public String getVenue() {
+        if(this.venue == null)
+            this.venue = "";
+        return venue;
     }
 
-    public void setLocal(String local) {
-        this.local = local;
+    public void setVenue(String local) {
+        this.venue = local;
     }
 
     public String getAddress() {
-        return address;
+        if(this.address == null)
+            this.description = "";
+        return this.address;
     }
 
     public void setAddress(String address) {
@@ -85,7 +117,10 @@ public class Event implements Serializable {
     }
 
     public String getState() {
-        return state;
+        if(this.state == null)
+            this.state = "";
+
+        return this.state;
     }
 
     public void setState(String state) {
@@ -101,31 +136,62 @@ public class Event implements Serializable {
     }
 
     public String getEnd_date() {
-        return end_date;
+        return this.end_date;
     }
 
     public void setEnd_date(String end_date) {
         this.end_date = end_date;
     }
 
-    public byte[] getFile_img_event() {
-        return file_img_event;
+    public byte[] getFile_img_event(Context ctx) {
+
+        byte[] array_byte_img = null;
+
+        if(this.img_logo == null){
+            try {
+                Bitmap bmp = Picasso.with(ctx).load(this.logo).get();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                array_byte_img = stream.toByteArray();
+            } catch (IOException e) {
+                Log.e("ERRO_IMG",e.getMessage());
+            }
+        }
+        else
+        {
+            array_byte_img = this.img_logo;
+        }
+
+        return array_byte_img;
+    }
+
+    public byte[] get_logo_sql() {
+        return this.img_logo;
     }
 
     public void setFile_img_event(byte[] file_img_event) {
-        this.file_img_event = file_img_event;
+        this.img_logo = file_img_event;
     }
 
-    public byte[] getFile_img_patronage() {
-        return file_img_patronage;
-    }
-
-    public void setFile_img_patronage(byte[] file_img_patronage) {
-        this.file_img_patronage = file_img_patronage;
-    }
 
     @Override
     public String toString() {
-        return this.getName();
+        return this.getTitle();
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEvent_type() {
+        return event_type;
+    }
+
+    public void setEvent_type(String event_type) {
+        this.event_type = event_type;
     }
 }

@@ -22,4 +22,14 @@
         android:layout_height="match_parent"
         />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Sem Favoritos.\n favorite alguma palestra \npara que apareça nessa área."
+        android:id="@+id/txt_favorite_not"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"/>
+
 </RelativeLayout>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/Relative_row_paper_paper">
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view_row_paper"
+        card_view:cardUseCompatPadding="true"
+        card_view:cardBackgroundColor="#FFFFFF"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        card_view:cardCornerRadius="2dp"
+        card_view:cardElevation="4dp"
+        >
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/Relative_row_paper">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:layout_marginLeft="5dp"
+                android:textStyle="bold"
+                android:text="Titulo do negócio"
+                android:textColor="#000000"
+                android:id="@+id/txtNome_Titulo"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:textStyle="bold"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="6dp"
+                android:text="Aqui vão os Nomes dos Caras, Lucas Schwalbe Ferreira por exemplo"
+                android:textColor="#000000"
+                android:id="@+id/txtNome_Autor"
+                android:layout_below="@+id/txtNome_Titulo"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginRight="20dp"
+                android:textSize="13dp"
+                android:textColor="#000000"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="   Aqui vai a descrição do Trabalho. Pode ser pequena como pode ser grande. pode não haver nada de descrição.    Aqui vai a descrição do Trabalho. Pode ser pequena como pode ser grande. pode não haver nada de descrição.    Aqui vai a descrição do Trabalho. Pode ser pequena como pode ser grande. pode não haver nada de descrição.    Aqui vai a descrição do Trabalho. Pode ser pequena como pode ser grande. pode não haver nada de descrição.    Aqui vai a descrição do Trabalho. Pode ser pequena como pode ser grande. pode não haver nada de descrição. "
+                android:id="@+id/txtDescricaoPaper"
+                android:layout_below="@+id/txtNome_Autor"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.CardView>
+</RelativeLayout>

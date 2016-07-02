@@ -106,7 +106,7 @@ ADDED from AndroidManifest.xml:50:9
 		ADDED from AndroidManifest.xml:53:13
 	android:name
 		ADDED from AndroidManifest.xml:51:13
-activity#br.com.makadu.makaduevento.UI.Tab_EventDetail_Talk
+activity#br.com.makadu.makaduevento.UI.Tab_EventDetail_Talk_Paper
 ADDED from AndroidManifest.xml:56:9
 	android:screenOrientation
 		ADDED from AndroidManifest.xml:57:13

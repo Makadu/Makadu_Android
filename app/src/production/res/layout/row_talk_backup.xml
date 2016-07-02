@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/Relative_row_talks">
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view_programacao"
+        card_view:cardUseCompatPadding="true"
+        android:layout_gravity="center"
+        card_view:cardBackgroundColor="#EEEEEE"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        card_view:cardCornerRadius="1dp"
+        card_view:cardElevation="2dp"
+        >
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!--<ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:id="@+id/img_relogio_img"
+                android:src="@drawable/relogio_ic"
+             /-->
+
+            <LinearLayout
+                android:id="@+id/linear_favoritar_programacao"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_weight="5"
+                    >
+                    />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_weight="1"
+                    >
+                    <ImageView
+                        android:id="@+id/img_star_favoritar"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@android:drawable/star_big_off"
+                        android:layout_marginLeft="5dp"
+
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_weight="5"
+                    >
+                    />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="10">
+
+                <LinearLayout
+                    android:id="@+id/linear_hora_titulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16dp"
+                        android:text="18:30"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:layout_marginLeft="4dp"
+
+                        android:id="@+id/txt_programacao_hora_ini_1"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16dp"
+                        android:text="Aqui vai o Título"
+                        android:layout_toRightOf="@+id/txt_programacao_hora_ini_1"
+                        android:layout_marginLeft="5dp"
+                        android:textStyle="bold"
+                        android:textColor="#424242"
+                        android:id="@+id/txtTitulo"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/linear_local_hora"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_below="@+id/linear_hora_titulo">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="13dp"
+                        android:layout_marginLeft="5dp"
+                        android:text="Aqui vai o Local e horarios"
+                        android:id="@+id/txt_Local_programacao"
+                        />
+
+                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:text="Carregando Palestrante"
+                    android:id="@+id/txt_Palestrante_programacao"
+                    android:layout_toRightOf="@+id/card_view_hora_programacao"
+                    android:layout_toEndOf="@id/card_view_hora_programacao"
+                    android:layout_below="@+id/linear_local_hora"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/linear_download_programacao_geral"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_below="@+id/txt_Palestrante_programacao"
+                    android:layout_marginTop="10dp">
+
+                    <LinearLayout
+                        android:id="@+id/linear_download_programacao"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        >
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/download_material"
+                            android:layout_marginLeft="5dp"
+                            />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="15dp"
+                            android:text="Download"
+                            android:layout_marginLeft="4dp"
+                            android:textColor="#000000"
+                            />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_pergunta_programacao"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        >
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/pergunta_material"
+                            android:layout_marginLeft="5dp"
+                            />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="4dp"
+                            android:textSize="15dp"
+                            android:text="@string/row_questioning"
+                            android:textColor="#000000"
+                            />
+                    </LinearLayout>
+                  <!--  <LinearLayout
+                        android:id="@+id/linear_interativa_programacao"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        >
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/pergunta_material"
+                            android:layout_marginLeft="5dp"
+                            />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="4dp"
+                            android:textSize="15dp"
+                            android:text="@string/row_interactive"
+                            android:textColor="#000000"
+                            />
+                    </LinearLayout>-->
+
+                </LinearLayout>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/radius_button"
+                    android:text="Votação interativa"
+                    android:textColor="@color/input_login"
+                    android:id="@+id/linear_interativa_programacao" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_weight="5"
+                    >
+                    />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_weight="1"
+                    >
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:cropToPadding="true"
+                        android:layout_height="15dp"
+                        android:id="@+id/img_avancar"
+                        android:src="@drawable/forward25"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_weight="5"
+                    >
+                    />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>

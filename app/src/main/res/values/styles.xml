@@ -24,8 +24,8 @@
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Makadu</item>
     </style>
 
-    <color name="primary">#47A495</color>
-    <color name="primaryDark">#009688</color>
+    <color name="primary">#4AA291</color>
+    <color name="primaryDark">#4AA291</color>
 
 
 </resources>

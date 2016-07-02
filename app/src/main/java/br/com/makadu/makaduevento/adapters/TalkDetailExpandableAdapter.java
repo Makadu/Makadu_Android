@@ -77,7 +77,6 @@ public class TalkDetailExpandableAdapter extends BaseExpandableListAdapter {
     }
 
 
-
     @Override
     public long getGroupId(int groupPosition) {
         return groupPosition;
@@ -132,7 +131,7 @@ public class TalkDetailExpandableAdapter extends BaseExpandableListAdapter {
                 convertView.setTag(holderAbout);
 
                 holderAbout.about = (TextView)convertView.findViewById(R.id.txt_about_talk);
-                holderAbout.about.setText(val.getDescricao());
+                holderAbout.about.setText(val.description);
 
             }
             if(groupPosition == 1) {
@@ -162,7 +161,8 @@ public class TalkDetailExpandableAdapter extends BaseExpandableListAdapter {
                 holderQuestion.speaker.setText(val.getSpeaker());
 
                 holderQuestion.date = (TextView)convertView.findViewById(R.id.txt_date_hora_talk);
-                holderQuestion.date.setText(util.getDateHour(val.getDate()));
+                //holderQuestion.date.setText(util.getDateHour(val.getDate()));
+                holderQuestion.date.setText(val.getDate());
 
             }
 
@@ -175,7 +175,7 @@ public class TalkDetailExpandableAdapter extends BaseExpandableListAdapter {
                 convertView.setTag(holderAbout);
 
                 holderAbout.about = (TextView)convertView.findViewById(R.id.txt_about_talk);
-                holderAbout.about.setText(val.getDescricao());
+                holderAbout.about.setText(val.description);
 
             }
             if(groupPosition == 1) {
@@ -204,7 +204,8 @@ public class TalkDetailExpandableAdapter extends BaseExpandableListAdapter {
                 holderQuestion.speaker.setText(val.getSpeaker());
 
                 holderQuestion.date = (TextView)convertView.findViewById(R.id.txt_date_hora_talk);
-                holderQuestion.date.setText(util.getDateHour(val.getDate()));
+                //holderQuestion.date.setText(util.getDateHour(val.getDate()));
+                holderQuestion.date.setText(val.getDate());
 
             }
         }

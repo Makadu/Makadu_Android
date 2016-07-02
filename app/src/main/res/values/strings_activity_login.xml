@@ -2,15 +2,16 @@
     <string name="title_activity_login">Login</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">E-mail</string>
+    <string name="prompt_email">Email</string>
     <string name="prompt_password">Senha</string>
-    <string name="action_sign_in">Acessar</string>
-    <string name="action_create_account">Criar Conta</string>
+    <string name="action_sign_in">LOG IN</string>
+    <string name="action_create_account">CADASTRE-SE</string>
     <string name="recupera_senha">Recuperar Senha</string>
     <string name="action_sign_in_short">Login</string>
     <string name="action_name_account">Nome</string>
     <string name="error_invalid_email">Opa... Esse endereço de E-mail é inválido</string>
     <string name="error_invalid_password">Senha muito curta. Digite uma maior por favor...</string>
     <string name="error_incorrect_password">A senha está incorreta</string>
+    <string name="error_incorrect_username">Usuário não Registrado.</string>
     <string name="error_field_required">Esse campo é obrigatório</string>
 </resources>

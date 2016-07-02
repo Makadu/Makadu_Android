@@ -5,29 +5,29 @@ package br.com.makadu.makaduevento.model;
  */
 public class Notice {
 
-    private String name_notice;
-    private String detail;
+    private String title;
+    private String description;
 
     public Notice(){}
 
     public Notice(String name_notice, String detail) {
-        this.detail = detail;
-        this.name_notice = name_notice;
+        this.description = detail;
+        this.title = name_notice;
     }
 
     public String getName_notice() {
-        return name_notice;
+        return title;
     }
 
     public void setName_notice(String name_notice) {
-        this.name_notice = name_notice;
+        this.title = name_notice;
     }
 
     public String getDetail() {
-        return detail;
+        return description;
     }
 
     public void setDetail(String detail) {
-        this.detail = detail;
+        this.description = detail;
     }
 }

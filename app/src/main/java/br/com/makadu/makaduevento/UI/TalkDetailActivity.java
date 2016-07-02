@@ -2,7 +2,9 @@ package br.com.makadu.makaduevento.UI;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -22,32 +24,46 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.localytics.android.Localytics;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import br.com.makadu.makaduevento.DAOParse.TalkDAO;
-import br.com.makadu.makaduevento.DAOParse.QuestionDAO;
+import br.com.makadu.makaduevento.DAO.dao.entityDao.EventDao;
+import br.com.makadu.makaduevento.DAO.dao.entityDao.TalkDao;
 import br.com.makadu.makaduevento.R;
 import br.com.makadu.makaduevento.Util.Email;
+import br.com.makadu.makaduevento.Util.SessionManager;
 import br.com.makadu.makaduevento.Util.Util;
 import br.com.makadu.makaduevento.Util.Question_talk;
 import br.com.makadu.makaduevento.adapters.TalkDetailExpandableAdapter;
+import br.com.makadu.makaduevento.model.RequestJson;
+import br.com.makadu.makaduevento.model.RequestRating;
+import br.com.makadu.makaduevento.model.ResponseJson;
+import br.com.makadu.makaduevento.model.Resposta;
 import br.com.makadu.makaduevento.model.Speaker;
 import br.com.makadu.makaduevento.model.Talk;
 import br.com.makadu.makaduevento.model.Question;
+import br.com.makadu.makaduevento.model.TalkSpeaker;
+import br.com.makadu.makaduevento.servicesRetrofit.returnAPI.GetRestAdapter;
+import br.com.makadu.makaduevento.servicesRetrofit.returnAPI.PostRestAdapter;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class TalkDetailActivity extends ActionBarActivity {
 
     static Talk obj_prog;
+    static String event_id;
     ArrayList<Speaker> list_palestrantes = new ArrayList<Speaker>();
     ListView listviewPalestrante;
+
+    private SessionManager session;
 
     TalkDetailExpandableAdapter adapter;
     ProgressBar progress;
@@ -61,10 +77,10 @@ public class TalkDetailActivity extends ActionBarActivity {
 
     @Override
     protected void  onResume () {
-        super.onResume ();
+        super.onResume();
         Localytics.openSession();
-        Localytics.tagScreen ("Detalhe Programacao");
-        Localytics.upload ();
+        Localytics.tagScreen("Detalhe Programacao");
+        Localytics.upload();
     }
 
     @Override
@@ -72,9 +88,17 @@ public class TalkDetailActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_talk_detail);
 
+        session = new SessionManager(this);
+
         util = new Util(getBaseContext());
         progress = (ProgressBar) findViewById(R.id.progressBar_talk_detail);
         obj_prog = (Talk)getIntent().getSerializableExtra("id");
+        event_id = getIntent().getStringExtra("event_id");
+
+        // verificar para aprimorar
+        Localytics.openSession();
+        Localytics.tagEvent(obj_prog.getTitle());
+        Localytics.upload();
 
         LinearLayout bt_download = (LinearLayout)findViewById(R.id.btn_detalhe_pro_Download);
 
@@ -84,12 +108,12 @@ public class TalkDetailActivity extends ActionBarActivity {
             bt_download.setVisibility(LinearLayout.VISIBLE);
         }
 
-        LinearLayout bt_questino = (LinearLayout)findViewById(R.id.btn_detalhe_pro_Pergunta);
+        LinearLayout bt_question = (LinearLayout)findViewById(R.id.btn_detalhe_pro_Pergunta);
 
         if (!obj_prog.isAllow_question()) {
-            bt_questino.setVisibility(LinearLayout.GONE);
+            bt_question.setVisibility(LinearLayout.GONE);
         } else {
-            bt_questino.setVisibility(LinearLayout.VISIBLE);
+            bt_question.setVisibility(LinearLayout.VISIBLE);
         }
 
         listGroup = new ArrayList<String>();
@@ -105,7 +129,7 @@ public class TalkDetailActivity extends ActionBarActivity {
         List<Talk> listTalk = new ArrayList<Talk>();
         listTalk.add(obj_prog);
 
-        listDataProg.put("Sobre esta Atividade", listTalk);
+        listDataProg.put(getString(R.string.about_activity), listTalk);
 
         return_question_loading();
         return_speaker_loading();
@@ -113,8 +137,8 @@ public class TalkDetailActivity extends ActionBarActivity {
         loaData();
 
         // GROUP
-        listGroup.add("Sobre esta Atividade");
-        listGroup.add("Palestrante");
+        listGroup.add(getString(R.string.about_activity));
+        listGroup.add(getString(R.string.about_Speaker));
         listGroup.add("Perguntas");
 
         adapter = new TalkDetailExpandableAdapter(this, listGroup, listDataProg, listDataPalestrante,listDataQuestion, obj_prog);
@@ -163,7 +187,7 @@ public class TalkDetailActivity extends ActionBarActivity {
             public void onClick(View v) {
 
                 try {
-                    new Email().sendEmailConteudoProgramacao(v.getContext(), obj_prog);
+                    new Email().sendEmailConteudoProgramacao(v.getContext(), obj_prog,event_id);
                 } catch (Exception e) {
                     Toast.makeText(v.getContext(), "Ocorreu algum erro no DOWNLOAD!!!", Toast.LENGTH_LONG).show();
                 }
@@ -174,7 +198,7 @@ public class TalkDetailActivity extends ActionBarActivity {
         btn_Pergunta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Question_talk().question(v.getContext(), obj_prog.getId());
+                new Question_talk().question(v.getContext(), obj_prog.getId(), event_id, session.returnUsername());
                 adapter.notifyDataSetChanged();
 
             }
@@ -196,11 +220,11 @@ public class TalkDetailActivity extends ActionBarActivity {
             @Override
             protected Void doInBackground(Void... arg0) {
 
-                ArrayList<Speaker> speakers = obj_prog.getSpeakers();
-
                 try {
+                    ArrayList<Speaker> speakers = (ArrayList<Speaker>) loaSpeakers();
+
                     if (!speakers.isEmpty()) {
-                        listDataPalestrante.put("Palestrante", speakers);
+                        listDataPalestrante.put(getString(R.string.about_Speaker), speakers);
                     } else {
                         return_no_speaker();
                     }
@@ -221,8 +245,6 @@ public class TalkDetailActivity extends ActionBarActivity {
 
         AsyncTask<Void, Void, Void> taskQuestion = new AsyncTask<Void, Void, Void>() {
 
-            QuestionDAO qDAO = new QuestionDAO();
-
             @Override
             protected void onPreExecute() {
                 progress.setVisibility(View.VISIBLE);
@@ -230,11 +252,21 @@ public class TalkDetailActivity extends ActionBarActivity {
 
             @Override
             protected Void doInBackground(Void... arg0) {
+                ArrayList<Question> questions = new ArrayList<Question>();
 
-                ArrayList<Question> questions = (ArrayList<Question>) qDAO.returnQuestionList(obj_prog.getId(), util.isConnected());
+                try {
+                    questions = (ArrayList<Question>) new GetRestAdapter().returnQuestion(event_id,obj_prog.getId());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-                if(!questions.isEmpty()) {
+                if(questions != null) {
+
+                    if(!questions.isEmpty()) {
                     listDataQuestion.put("Perguntas", questions);
+                    } else {
+                        return_no_question();
+                    }
                 } else {
                     return_no_question();
                 }
@@ -254,125 +286,316 @@ public class TalkDetailActivity extends ActionBarActivity {
         }
     }
 
-    private void loadRating() {
-        RatingBar rating = (RatingBar)findViewById(R.id.rating_inicial);
-        /*
-        ParseQuery<ParseObject> pqprogram = ParseQuery.getQuery("Talks");
-        ParseObject program = new ParseObject("Talks");
+    private List<Speaker> loaSpeakers() throws IOException {
 
-        try {
-            program = pqprogram.get(obj_prog.getId());
-            ParseQuery<ParseObject> query_rat = ParseQuery.getQuery("Rating");
-            query_rat.whereEqualTo("talk", program);
-            query_rat.whereEqualTo("user",ParseUser.getCurrentUser());
-            query_rat.orderByAscending("createdAt");
-            query_rat.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
+        TalkDao tDAO = new TalkDao(getApplication().getApplicationContext());
 
-            int rat_int = 0;
-            List<ParseObject> list_PO_Rating = null;
-            if(util.isConnected()) {
-                list_PO_Rating = query_rat.find();
+        List<Speaker> listSpeakers = new ArrayList<Speaker>();
 
-                for(ParseObject ra : list_PO_Rating ) {
-                    rat_int = (Integer) ra.get("note");
-                }
+        if(util.isConnected()) {
+            listSpeakers = (ArrayList<Speaker>) new GetRestAdapter().returnTalk(event_id,obj_prog.getId());
+            try {
+                //tDAO.upsert(list_talk,id);
+            } catch (Exception ex) {
+                Log.e("erro", ex.getMessage());
             }
-
-            rating.setRating(rat_int);
-
-        } catch (ParseException e) {
-            Log.d("erro_rating",e.getMessage());
+        }
+        else
+        {
+            //list_talk = (ArrayList<Talk>) tDAO.getListTalkForEventIdTAB_TALK(Long.parseLong(id));
         }
 
-        final ParseObject finalProgram = program;
-        */
+        return listSpeakers;
+    }
+
+    private void addFavoriteEvent(final Context c) {
+
+        try {
+            Call<ResponseJson> call = new PostRestAdapter().newEventFavorite(session.returnUserId(), event_id);
+
+            call.enqueue(new Callback<ResponseJson>() {
+                @Override
+                public void onResponse(Response<ResponseJson> response, Retrofit retrofit) {
+
+                    Log.d("MAKADU", response.message());
+                    SharedPreferences sp = c.getSharedPreferences("MyPreferencesFavoriteEvents", Context.MODE_PRIVATE);
+                    Set<String> favorites = sp.getStringSet("favorite_events", new HashSet<String>());
+
+                    if (!favorites.contains(event_id)) {
+                        favorites.add(event_id);
+                    }
+
+                    sp.edit().putStringSet("favorite_events", favorites).apply();
+
+                    AlertDialog.Builder alert = new AlertDialog.Builder(c);
+                    alert.setTitle("Evento Adicionado com Sucesso. \n");
+                    alert.setNeutralButton("OK", null);
+                    alert.show();
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+
+                }
+            });
+
+        } catch (IOException e) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(c);
+            alert.setTitle("Ocorreu algum problema em Adicionar o Evento. \n");
+            alert.setNeutralButton("OK", null);
+            alert.show();
+            e.printStackTrace();
+        }
+    }
+
+    private void loadRating() {
+        RatingBar rating = (RatingBar)findViewById(R.id.rating_inicial);
+
         rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
 
             @Override
-            public void onRatingChanged(RatingBar ratingBar_on, float rating, boolean fromUser) {
-                LayoutInflater inflater = LayoutInflater.from(TalkDetailActivity.this);
-                AlertDialog.Builder alert = new AlertDialog.Builder(TalkDetailActivity.this);
-                alert.setTitle(null);
-                View alert_ratingView = inflater.inflate(R.layout.alert_rating,null,false);
+            public void onRatingChanged(RatingBar ratingBar_on, final float rating, boolean fromUser) {
 
-                TextView txtAvaliacao = (TextView)alert_ratingView.findViewById(R.id.txt_avalie_essa_palestra);
-                txtAvaliacao.setText("Avaliacão de " + ParseUser.getCurrentUser().get("full_name"));
+                if (new EventDao(getApplication().getApplicationContext()).eventPrivate(event_id)) {
+                    if (new Util(getApplication().getApplicationContext()).isConnected()) {
 
-                final EditText edtDescricao = (EditText)alert_ratingView.findViewById(R.id.edt_Descricao_rating);
-
-                final RatingBar ratingBar = (RatingBar) alert_ratingView.findViewById(R.id.ratingBar_rating);
-
-                ratingBar.setRating(rating);
-                alert.setView(alert_ratingView);
-                alert.create();
-                alert.setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        AsyncTask<Void, Void, Void> ratingTask = new AsyncTask<Void, Void, Void>() {
-
-                            boolean ok = true;
+                        boolean isFavorite = false;
+                        Call<Resposta> responseCall = null;
+                        try {
+                            responseCall = new GetRestAdapter().isFavoriteEvent(session.returnUserId(), event_id);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        responseCall.enqueue(new Callback<Resposta>() {
 
                             @Override
-                            protected void onPreExecute() {
-                                pd = new ProgressDialog(TalkDetailActivity.this);
-                                pd.setTitle("Avaliando Palestra");
-                                pd.setMessage("Carregando...");
-                                pd.setCancelable(false);
-                                pd.setIndeterminate(true);
-                                pd.show();
+                            public void onResponse(Response<Resposta> response, Retrofit retrofit) {
+                                Log.v("LOG Email", response.message());
+                                if (response.body().resposta == true) {
+
+                                    LayoutInflater inflater = LayoutInflater.from(TalkDetailActivity.this);
+                                    AlertDialog.Builder alert = new AlertDialog.Builder(TalkDetailActivity.this);
+                                    alert.setTitle(null);
+                                    View alert_ratingView = inflater.inflate(R.layout.alert_rating, null, false);
+
+                                    TextView txtAvaliacao = (TextView) alert_ratingView.findViewById(R.id.txt_avalie_essa_palestra);
+                                    //txtAvaliacao.setText("Avaliacão de " + ParseUser.getCurrentUser().get("full_name"));
+
+                                    final EditText edtDescricao = (EditText) alert_ratingView.findViewById(R.id.edt_Descricao_rating);
+
+                                    final RatingBar ratingBar = (RatingBar) alert_ratingView.findViewById(R.id.ratingBar_rating);
+
+                                    Log.v("LOGRATING", "RAT ID: " + rating);
+
+                                    ratingBar.setRating(rating);
+                                    alert.setView(alert_ratingView);
+                                    alert.create();
+                                    alert.setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            final int rating = (int)ratingBar.getRating();
+                                            final String descricaoRating = edtDescricao.getText().toString();
+
+                                            AsyncTask<Void, Void, Void> ratingTask = new AsyncTask<Void, Void, Void>() {
+
+                                                boolean ok = true;
+
+                                                @Override
+                                                protected void onPreExecute() {
+                                                    pd = new ProgressDialog(TalkDetailActivity.this);
+                                                    pd.setTitle("Avaliando Palestra");
+                                                    pd.setMessage("Carregando...");
+                                                    pd.setCancelable(false);
+                                                    pd.setIndeterminate(true);
+                                                    pd.show();
+                                                }
+
+                                                @Override
+                                                protected Void doInBackground(Void... arg0) {
+                                                    try {
+
+                                                        Log.v("LOGRATING", " rating: " +rating);
+
+                                                        RequestRating requestRate = new RequestRating(session.returnUsername(), rating, descricaoRating);
+
+                                                        Log.v("LOGRATING", "EVENT ID: " + event_id + " TALK ID: " + obj_prog.getId() + " USERNAME: " + requestRate.username + " rating: " + requestRate.value + " descricao: " + requestRate.commentary);
+
+                                                        retrofit.Call<ResponseJson> json = null;
+                                                        json = new PostRestAdapter().rateEvent(event_id, obj_prog.getId(), requestRate);
+
+                                                        json.enqueue(new Callback<ResponseJson>() {
+                                                            @Override
+                                                            public void onResponse(Response<ResponseJson> response, Retrofit retrofit) {
+                                                                ok = true;
+                                                            }
+
+                                                            @Override
+                                                            public void onFailure(Throwable t) {
+                                                                Log.e("LOGRATING", t.getLocalizedMessage());
+                                                                ok = false;
+                                                            }
+                                                        });
+
+                                                    } catch (Exception e) {
+                                                        ok = false;
+                                                    }
+
+                                                    return null;
+                                                }
+
+                                                @Override
+                                                protected void onPostExecute(Void result) {
+                                                    if (pd != null) {
+
+                                                        if (ok) {
+                                                            Toast.makeText(TalkDetailActivity.this, "Avaliacao Efetuada \n" + "Nota: " + ratingBar.getRating(), Toast.LENGTH_LONG).show();
+                                                        } else {
+                                                            Toast.makeText(TalkDetailActivity.this, "Sem conexão com a internet, tente fazer a pergunta novamente mais tarde.", Toast.LENGTH_LONG).show();
+                                                        }
+
+                                                        pd.dismiss();
+                                                    }
+                                                }
+                                            };
+
+                                            ratingTask.execute((Void[]) null);
+                                        }
+                                    });
+                                    alert.show();
+
+                                } else {
+                                    AlertDialog.Builder b = new AlertDialog.Builder(TalkDetailActivity.this);
+                                    b.setTitle("Coloque a senha");
+                                    final EditText input = new EditText(TalkDetailActivity.this);
+                                    b.setView(input);
+                                    b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            String inputedPassword = input.getText().toString();
+
+                                            if (new EventDao(TalkDetailActivity.this).eventPassword(event_id).contentEquals(inputedPassword)) {
+                                                addFavoriteEvent(TalkDetailActivity.this);
+                                            } else {
+                                                AlertDialog.Builder al = new AlertDialog.Builder(TalkDetailActivity.this);
+                                                al.setMessage("Digite a senha do evento. Caso não tenha, procure a organização do evento");
+                                                al.setNeutralButton("OK", null);
+                                                al.show();
+                                            }
+                                        }
+                                    });
+                                    b.setNegativeButton("Cancelar", null);
+                                    b.create().show();
+                                }
                             }
 
                             @Override
-                            protected Void doInBackground(Void... arg0) {
-                                try {
-                                    ParseObject rating = new ParseObject("Rating");
-                                    ParseObject program = new ParseObject("Talks");
-                                    ParseQuery<ParseObject> pqprogram = ParseQuery.getQuery("Talks");
-                                    program = pqprogram.get(obj_prog.getId());
+                            public void onFailure(Throwable t) {
 
-                                    rating.put("note", ratingBar.getRating());
-                                    rating.put("user", ParseUser.getCurrentUser());
-                                    rating.put("talk", program);
-                                    rating.put("description", edtDescricao.getText().toString());
-                                    rating.saveInBackground();
+                            }
+                        });
+                    }
+                } else {
 
-                                } catch (Exception e) {
-                                    ok = false;
+                    LayoutInflater inflater = LayoutInflater.from(TalkDetailActivity.this);
+                    AlertDialog.Builder alert = new AlertDialog.Builder(TalkDetailActivity.this);
+                    alert.setTitle(null);
+                    View alert_ratingView = inflater.inflate(R.layout.alert_rating, null, false);
+
+                    TextView txtAvaliacao = (TextView) alert_ratingView.findViewById(R.id.txt_avalie_essa_palestra);
+                    //txtAvaliacao.setText("Avaliacão de " + ParseUser.getCurrentUser().get("full_name"));
+
+                    final EditText edtDescricao = (EditText) alert_ratingView.findViewById(R.id.edt_Descricao_rating);
+
+                    final RatingBar ratingBar = (RatingBar) alert_ratingView.findViewById(R.id.ratingBar_rating);
+
+                    ratingBar.setRating(rating);
+                    alert.setView(alert_ratingView);
+                    alert.create();
+                    alert.setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            final int rating = (int)ratingBar.getRating();
+                            final String descricaoRating = edtDescricao.getText().toString();
+
+                            AsyncTask<Void, Void, Void> ratingTask = new AsyncTask<Void, Void, Void>() {
+
+                                boolean ok = true;
+
+                                @Override
+                                protected void onPreExecute() {
+                                    pd = new ProgressDialog(TalkDetailActivity.this);
+                                    pd.setTitle("Avaliando Palestra");
+                                    pd.setMessage("Carregando...");
+                                    pd.setCancelable(false);
+                                    pd.setIndeterminate(true);
+                                    pd.show();
                                 }
 
-                                return null;
-                            }
+                                @Override
+                                protected Void doInBackground(Void... arg0) {
+                                    try {
 
-                            @Override
-                            protected void onPostExecute(Void result) {
-                                if (pd != null) {
+                                        RequestRating requestRate = new RequestRating(session.returnUsername(), rating, descricaoRating);
 
-                                    if (ok) {
-                                        Toast.makeText(TalkDetailActivity.this, "Avaliacao Efetuada \n" + "Nota: " + ratingBar.getRating(), Toast.LENGTH_LONG).show();
-                                    } else {
-                                        Toast.makeText(TalkDetailActivity.this, "Sem conexão com a internet, tente fazer a pergunta novamente mais tarde.", Toast.LENGTH_LONG).show();
+                                        Log.v("LOGRATING", "EVENT ID: " + event_id + " TALK ID: " + obj_prog.getId() + " USERNAME: " + requestRate.username + " rating: " + requestRate.value + " descricao: " + requestRate.commentary);
+
+                                        retrofit.Call<ResponseJson> json = null;
+                                        json = new PostRestAdapter().rateEvent(event_id, obj_prog.getId(), requestRate);
+
+                                        json.enqueue(new Callback<ResponseJson>() {
+                                            @Override
+                                            public void onResponse(Response<ResponseJson> response, Retrofit retrofit) {
+                                                ok = true;
+                                            }
+
+                                            @Override
+                                            public void onFailure(Throwable t) {
+                                                Log.e("LOGRATING", t.getLocalizedMessage());
+                                                ok = false;
+                                            }
+                                        });
+
+                                    } catch (Exception e) {
+                                        ok = false;
                                     }
 
-                                    pd.dismiss();
+                                    return null;
                                 }
-                            }
-                        };
 
-                        ratingTask.execute((Void[]) null);
-                    }
-                });
-                alert.show();
+                                @Override
+                                protected void onPostExecute(Void result) {
+                                    if (pd != null) {
+
+                                        if (ok) {
+                                            Toast.makeText(TalkDetailActivity.this, "Avaliacao Efetuada \n" + "Nota: " + ratingBar.getRating(), Toast.LENGTH_LONG).show();
+                                        } else {
+                                            Toast.makeText(TalkDetailActivity.this, "Sem conexão com a internet, tente fazer a pergunta novamente mais tarde.", Toast.LENGTH_LONG).show();
+                                        }
+
+                                        pd.dismiss();
+                                    }
+                                }
+                            };
+
+                            ratingTask.execute((Void[]) null);
+                        }
+                    });
+                    alert.show();
+                }
             }
         });
+
     }
 
     private void return_speaker_loading() {
         Speaker speaker = new Speaker("0","Carregando...","carregando Palestrante");
         List<Speaker> list_speaker = new ArrayList<Speaker>();
         list_speaker.add(speaker);
-        listDataPalestrante.put("Palestrante", list_speaker);
+        listDataPalestrante.put(getString(R.string.about_Speaker), list_speaker);
     }
 
     private void return_question_loading() {
@@ -387,7 +610,7 @@ public class TalkDetailActivity extends ActionBarActivity {
         Speaker speaker = new Speaker("0","Palestrante à definir","");
         List<Speaker> list_speaker = new ArrayList<Speaker>();
         list_speaker.add(speaker);
-        listDataPalestrante.put("Palestrante", list_speaker);
+        listDataPalestrante.put(getString(R.string.about_Speaker), list_speaker);
     }
 
     private void return_no_question() {

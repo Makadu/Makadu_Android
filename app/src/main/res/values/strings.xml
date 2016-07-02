@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- key parse-->
-    <string name="app_key1">YOUR_APP_KEY</string>
-    <string name="app_key2">YOUR_CLIENT_KEY</string>
 
     <string name="app_name">Makadu</string>
     <string name="app_aviso">Avisos</string>
@@ -10,22 +7,45 @@
     <string name="action_settings">Configurações</string>
     <string name="title_activity_tab">Makadu</string>
     <string name="title_section1">Evento</string>
+    <string name="title_todos">Eventos</string>
+    <string name="title_meusEventos">Meus Eventos</string>
     <string name="title_section2">Programação</string>
+    <string name="title_section3">Trabalhos Científicos</string>
     <string name="title_activity_detalhe__evento">Detalhe Evento</string>
     <string name="title_activity_tab__detalhe__evento">Detalhes</string>
+    <string name="title_activity_tab__detalhe__main">Makadu</string>
     <string name="action_search">Pesquisar...</string>
     <string name="action_notification">Notificacão</string>
     <string name="title_activity_detalhe__programacao">Detalhe da Programação</string>
     <string name="title_activity_exemplo__notificacao">Notificacao</string>
     <string name="encaminha_download_pergunta">Clique na atividade para a qual deseja enviar uma pergunta ou fazer o download do conteúdo na PROGRAMAÇÃO !</string>
     <string name="download_efetuado_sucesso">O material da palestra foi enviado para seu e-mail com sucesso!</string>
+    <string name="sent_email_when_available">O material será enviado para seu e-mail quando disponível.</string>
     <string name="pergunta_enviada_sucesso">Sua pergunta foi enviada com sucesso e aguarda moderação. Obrigado!</string>
+    <string name="envie_perg">Envie uma pergunta!</string>
+    <string name="submit">Enviar</string>
+    <string name="cancel">Cancelar</string>
     <string name="rating">Avaliação efetuada com sucesso!</string>
     <string name="aviso_email">Você receberá os slides nesse email. Se você não quiser usar seu email verdadeiro não tem problema, mas você não receberá os materiais que solicitar.</string>
+    <string name="row_questioning">Perguntar</string>
+    <string name="row_interactive">Interativa</string>
+    <string name="activity_loading_talk">Aguarde enquanto carregamos a programação completa...</string>
+    <string name="add_my_events">Adicionar Evento em Meus Eventos</string>
+    <string name="remove_my_events">Remover Evento de Meus Eventos</string>
+    <string name="password_to">Digite a senha do evento. Caso não tenha, procure a organização do evento</string>
+    <string name="send_question">Envie uma pergunta</string>
+    <string name="no_internet">Identificamos que voçê não está conectado na Internet ou não está navegando. Verifique e Tente novamente.</string>
+    <string name="exception_internet">Ocorreu Algum Problema com a Internet.</string>
+    <string name="about_activity">Sobre a Atividade</string>
+    <string name="about_Speaker">Sobre o Palestrante</string>
+    <string name="success_event">Evento adicionado com sucesso</string>
 
-<!-- TODO: Remove or change this placeholder text -->
     <string name="title_activity_notification">Notificações</string>
     <string name="title_activity_sponsor_screen">Patrocinador</string>
-    <string name="title_activity_favorite">Favoritos</string>
+    <string name="title_activity_favorite">Favorites</string>
+    <string name="title_activity_tab__events__primary">Tab_Events_Primary</string>
+    <string name="title_activity_before_vote">BeforeVote</string>
+    <string name="title_activity_interactive_voting">InteractiveVoting</string>
+    <string name="title_activity_evaluation">Evaluation</string>
 
 </resources>

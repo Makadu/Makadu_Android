@@ -2,6 +2,7 @@ package br.com.makadu.makaduevento.adapters;
 
 import br.com.makadu.makaduevento.R;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +21,7 @@ import br.com.makadu.makaduevento.model.Event;
  * Created by lucasschwalbeferreira on 05/02/15.
  */
 public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder> {
+    private Context context;
     private List<Event> events;
     private List<Event> visibleObjects;
 
@@ -72,20 +74,20 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        TextView nome = (TextView)holder.view.findViewById(R.id.txt_principal_Nome);
-        TextView cidade = (TextView)holder.view.findViewById(R.id.txtCidade);
-        TextView dataini = (TextView)holder.view.findViewById(R.id.txtDataInicio);
-        TextView datafim = (TextView)holder.view.findViewById(R.id.txtDataFim);
+        //TextView nome = (TextView)holder.view.findViewById(R.id.txt_principal_Nome);
+        //TextView cidade = (TextView)holder.view.findViewById(R.id.txtCidade);
+        //TextView dataini = (TextView)holder.view.findViewById(R.id.txtDataInicio);
+        //TextView datafim = (TextView)holder.view.findViewById(R.id.txtDataFim);
         ImageView img_pat = (ImageView)holder.view.findViewById(R.id.img_patrocinador);
 
-        nome.setText(events.get(position).getName());
-        cidade.setText(events.get(position).getCity());
-        dataini.setText(events.get(position).getStart_date());
-        datafim.setText(events.get(position).getEnd_date());
+        //nome.setText(events.get(position).getTitle());
+        //cidade.setText(events.get(position).getCity());
+        //dataini.setText(events.get(position).getStart_date());
+        //datafim.setText(events.get(position).getEnd_date());
 
         //events.get(position).getFile_img_patronage()
 
-        byte[] img_byte_pat = events.get(position).getFile_img_patronage();
+        byte[] img_byte_pat = events.get(position).getFile_img_event(context);
         if(img_byte_pat != null){
             Bitmap bitmap_pat = BitmapFactory.decodeByteArray(img_byte_pat, 0, img_byte_pat.length);
             img_pat.setImageBitmap(bitmap_pat);

@@ -26,15 +26,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.localytics.android.Localytics;
-import com.parse.ParseException;
-import com.parse.ParseUser;
-import com.parse.SignUpCallback;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.makadu.makaduevento.R;
+import br.com.makadu.makaduevento.Util.SessionManager;
 import br.com.makadu.makaduevento.Util.Util;
+import br.com.makadu.makaduevento.model.User;
+import br.com.makadu.makaduevento.servicesRetrofit.returnAPI.PostRestAdapter;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * Created by lucasschwalbeferreira on 04/05/15.
@@ -47,6 +54,7 @@ public class CreateAccountActivity extends Activity implements LoaderManager.Loa
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private SessionManager session;
     Util util;
 
     @Override
@@ -107,7 +115,7 @@ public class CreateAccountActivity extends Activity implements LoaderManager.Loa
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        ParseUser.logOut();
+        //ParseUser.logOut();
         finish();
     }
 
@@ -172,8 +180,48 @@ public class CreateAccountActivity extends Activity implements LoaderManager.Loa
             focusView.requestFocus();
         } else {
 
+            User user = new User(name,email,email,password);
+
+            Call<User> userResponse = null;
+            try {
+                userResponse = new PostRestAdapter().createUser(user);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             showProgress(true);
 
+            userResponse.enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Response<User> response, Retrofit retrofit) {
+                    try {
+                        User u = response.body();
+
+                        if (u.result.equals("Sucesso")) {
+                            session = new SessionManager(getApplicationContext());
+                            session.setLogin(true, u.user_id,email);
+                            Toast.makeText(CreateAccountActivity.this, "Usuário: " + email + " criado!!!", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(CreateAccountActivity.this, Tab_Main.class);
+                            startActivity(intent);
+
+                        }
+                    }catch (Exception e) {
+                        Log.e("log_Erro", e.getLocalizedMessage());
+                        Toast.makeText(CreateAccountActivity.this, "O e-mail digitado é inválido. Cadastre um email válido.", Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+
+                }
+            });
+
+            showProgress(false);
+
+
+            /*ShowProgress(true);
+            teste user
             ParseUser user = new ParseUser();
 
             user.put("full_name",name);
@@ -200,7 +248,7 @@ public class CreateAccountActivity extends Activity implements LoaderManager.Loa
                     }
                     showProgress(false);
                 }
-            });
+            });*/
         }
     }
 
@@ -265,7 +313,7 @@ public class CreateAccountActivity extends Activity implements LoaderManager.Loa
 
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
+        //Create adapterTalk to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<String>(CreateAccountActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);

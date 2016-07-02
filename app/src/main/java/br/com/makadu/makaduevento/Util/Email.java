@@ -4,141 +4,212 @@ package br.com.makadu.makaduevento.Util;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
-import com.parse.FunctionCallback;
-import com.parse.ParseCloud;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 
-
+import br.com.makadu.makaduevento.DAO.dao.entityDao.EventDao;
+import br.com.makadu.makaduevento.DAO.dao.entityDao.TalkDao;
+import br.com.makadu.makaduevento.R;
+import br.com.makadu.makaduevento.model.RequestJson;
+import br.com.makadu.makaduevento.model.ResponseJson;
+import br.com.makadu.makaduevento.model.Resposta;
 import br.com.makadu.makaduevento.model.Talk;
+import br.com.makadu.makaduevento.servicesRetrofit.returnAPI.GetRestAdapter;
+import br.com.makadu.makaduevento.servicesRetrofit.returnAPI.PostRestAdapter;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * Created by lucasschwalbeferreira on 27/03/15.
  */
 public class Email {
 
+    public String event_id_geral;
+    public SessionManager session;
     ProgressDialog pd;
-
     private boolean agendamento(Talk talk, Context c) throws IOException {
 
+        SessionManager session = new SessionManager(c);
         boolean ok = true;
-
-        ParseQuery<ParseObject> pqprogram = ParseQuery.getQuery("Talks");
-
-        ParseObject program = null;
-
-        try {
-            program = pqprogram.get (talk.getId());
-        } catch (Exception e) {
-            ok = false;
-            throw new IOException("erro http");
-        }
-
-        ParseObject schedule = new ParseObject("Schedule");
-        schedule.put("talk", program);
-        schedule.put("user", ParseUser.getCurrentUser());
-
-        try {
-            schedule.saveInBackground();
-        } catch (Exception e) {
-            ok = false;
-            throw new IOException("erro http");
-        }
-
         return ok;
     }
 
-    public void sendEmailConteudoProgramacao(final Context c, final Talk talk) {
+    public void sendEmailConteudoProgramacao(final Context c, final Talk talk,final String event_id) {
 
-        final String TO = ParseUser.getCurrentUser().getEmail().toString();
+        event_id_geral = event_id;
 
-        Map<String, String> params = new HashMap<String, String>();
+        session = new SessionManager(c);
 
-        params.put("toEmail", TO);
-        params.put("fromEmail", "no-reply@makadu.net");
+        if(new EventDao(c).eventPrivate(event_id)) {
 
-        String text = "Material da palestra - " + talk.getTitulo() + " \n Clique no link abaixo para realizar o download do material \n\n" + talk.getUrl();
-        params.put("text", text);
-        params.put("subject", "Material da palestra - " + talk.getTitulo());
+            if (new Util(c).isConnected()) {
 
-        Log.d("talk", talk.getUrl() + "");
+                boolean isFavorite = false;
+                Call<Resposta> responseCall = null;
+                try {
+                    responseCall = new GetRestAdapter().isFavoriteEvent(session.returnUserId(), event_id);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                responseCall.enqueue(new Callback<Resposta>() {
 
-        if (talk.getUrl().startsWith("http")) {
-            ParseCloud.callFunctionInBackground("sendMail", params, new FunctionCallback<String>() {
+                    @Override
+                    public void onResponse(Response<Resposta> response, Retrofit retrofit) {
+                        Log.v("LOG Email", response.message());
+                        if (response.body().resposta == true) {
+                            try {
+                                final String username = session.returnUsername();
+                                //final String event_id = new TalkDao(c).returnEventId(Long.parseLong(talk.getId()));
 
-                public void done(String result, ParseException e) {
-                    if (e == null) {
-                        AlertDialog.Builder alert = new AlertDialog.Builder(c);
-                        alert.setMessage("O material foi enviado para o email " + TO + " com sucesso!");
-                        alert.setNeutralButton("OK", null);
-                        alert.show();
-                        //Toast.makeText(c, "O material da palestra foi enviado para o e-mail com sucesso! Confira seu Email", Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(c, "Sem conexão com a internet, tente novamente mais tarde.", Toast.LENGTH_LONG).show();
+                                Log.d("LOG Email", "Talk - > " + talk.getId() + "  username: " + session.returnUsername() + "  user_id: " + session.returnUserId() + " event_id: " + event_id);
+                                RequestJson r = new RequestJson(session.returnUsername());
+                                // capturar o id do evento
+                                Call<ResponseJson> responseCall = new PostRestAdapter().newDownload(event_id, talk.getId(), r);
+                                responseCall.enqueue(new Callback<ResponseJson>() {
+
+                                    @Override
+                                    public void onResponse(Response<ResponseJson> response, Retrofit retrofit) {
+                                        Log.v("LOG Email", response.message());
+                                        if (response.body().result.equalsIgnoreCase("link enviado")) {
+                                            Toast.makeText(c, "Email enviado com sucesso.", Toast.LENGTH_LONG).show();
+                                        } else if (response.body().result.equalsIgnoreCase("download agendado")) {
+                                            Toast.makeText(c, "O material será enviado para " + username + " quando disponível.", Toast.LENGTH_LONG).show();
+                                        } else {
+                                            Toast.makeText(c, "Ocorreu algum erro: " + response.body().result, Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Throwable t) {
+                                        Toast.makeText(c, "Tivemos alguma dificuldade em enviar o email.", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                Toast.makeText(c, "Tivemos alguma dificuldade em enviar o email.", Toast.LENGTH_LONG).show();
+                            }
+                        } else {
+                            AlertDialog.Builder b = new AlertDialog.Builder(c);
+                            b.setTitle("Coloque a senha");
+                            final EditText input = new EditText(c);
+                            b.setView(input);
+                            b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                   String inputedPassword = input.getText().toString();
+
+                                    if(new EventDao(c).eventPassword(event_id).contentEquals(inputedPassword)){
+                                        addFavoriteEvent(c);
+                                    }
+                                    else
+                                    {
+                                        AlertDialog.Builder al = new AlertDialog.Builder(c);
+                                        al.setMessage("Digite a senha do evento. Caso não tenha, procure a organização do evento");
+                                        al.setNeutralButton("OK", null);
+                                        al.show();
+                                    }
+                                }
+                            });
+                            b.setNegativeButton("Cancelar", null);
+                            b.create().show();
+                        }
                     }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+
+                    }
+                });
+            }
+        }
+        else {
+            try {
+
+                final String username = session.returnUsername();
+                //final String event_id = new TalkDao(c).returnEventId(Long.parseLong(talk.getId()));
+
+                Log.d("LOG Email", "Talk - > " + talk.getId() + "  username: " + session.returnUsername() + "  user_id: " + session.returnUserId() + " event_id: " + event_id);
+                RequestJson r = new RequestJson(session.returnUsername());
+                // capturar o id do evento
+                Call<ResponseJson> responseCall = new PostRestAdapter().newDownload(event_id, talk.getId(), r);
+                responseCall.enqueue(new Callback<ResponseJson>() {
+
+                    @Override
+                    public void onResponse(Response<ResponseJson> response, Retrofit retrofit) {
+                        Log.v("LOG Email", response.message());
+                        if (response.body().result.equalsIgnoreCase("link enviado")) {
+                            Toast.makeText(c, "Email enviado com sucesso.", Toast.LENGTH_LONG).show();
+                        } else if (response.body().result.equalsIgnoreCase("download agendado")) {
+                            Toast.makeText(c, "O material será enviado para " + username + " quando disponível.", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(c, "Ocorreu algum erro: " + response.body().result, Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        Toast.makeText(c, "Tivemos alguma dificuldade em enviar o email.", Toast.LENGTH_LONG).show();
+                    }
+                });
+            } catch (Exception e) {
+                Toast.makeText(c, "Tivemos alguma dificuldade em enviar o email.", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        }
+
+    private void addFavoriteEvent(final Context c) {
+
+        try {
+            Call<ResponseJson> call = new PostRestAdapter().newEventFavorite(session.returnUserId(), event_id_geral);
+
+            call.enqueue(new Callback<ResponseJson>() {
+                @Override
+                public void onResponse(Response<ResponseJson> response, Retrofit retrofit) {
+
+                    Log.d("MAKADU", response.message());
+                    SharedPreferences sp = c.getSharedPreferences("MyPreferencesFavoriteEvents", Context.MODE_PRIVATE);
+                    Set<String> favorites = sp.getStringSet("favorite_events", new HashSet<String>());
+
+                    if (!favorites.contains(event_id_geral)) {
+                        favorites.add(event_id_geral);
+                    }
+
+                    sp.edit().putStringSet("favorite_events", favorites).apply();
+
+                    AlertDialog.Builder alert = new AlertDialog.Builder(c);
+                    alert.setTitle("Evento Adicionado com Sucesso. \n");
+                    alert.setNeutralButton("OK", null);
+                    alert.show();
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+
                 }
             });
 
-
-        } else {
-            AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
-
-                boolean ok = true;
-
-                @Override
-                protected void onPreExecute() {
-                    pd = new ProgressDialog(c);
-                    pd.setTitle("Agendando Download");
-                    pd.setMessage("Carregando...");
-                    pd.setCancelable(false);
-                    pd.setIndeterminate(true);
-                    pd.show();
-                }
-
-                @Override
-                protected Void doInBackground(Void... arg0) {
-
-                    try {
-                        if (!agendamento(talk, c)) {
-                            ok = false;
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        ok = false;
-                    }
-
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void result) {
-                    if (pd != null) {
-                        if(ok) {
-                            AlertDialog.Builder alert = new AlertDialog.Builder(c);
-                            alert.setMessage("O material será enviado para " + TO + " quando disponível.");
-                            alert.setNeutralButton("OK", null);
-                            alert.show();
-                        }
-                        else {
-                            Toast.makeText(c,"Sem conexão com a internet, tente novamente mais tarde.", Toast.LENGTH_LONG).show();
-                        }
-                        pd.dismiss();
-                    }
-                }
-            };
-
-            task.execute((Void[]) null);
+        } catch (IOException e) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(c);
+            alert.setTitle("Ocorreu algum problema em Adicionar o Evento. \n");
+            alert.setNeutralButton("OK", null);
+            alert.show();
+            e.printStackTrace();
         }
     }
 
-}
+    }

@@ -8,7 +8,7 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:background="#FFFFFF"
     android:id="@+id/fragment_tab_detalhe_evento_1"
-    tools:context="br.com.makadu.makaduevento.UI.Tab_EventDetail_Talk$PlaceholderFragment">
+    tools:context=".UI.Tab_EventDetail_Talk_Paper$PlaceholderFragment">
 
     <TextView android:id="@+id/section_label" android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -42,13 +42,34 @@
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/evento"
                 />
-
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/add_my_events"
+                android:textColor="@color/input_login"
+                android:background="@drawable/radius_button"
+                android:id="@+id/btn_favoritar_desfavoritar"
+                android:layout_below="@+id/img_logo_detalhe"
+                android:layout_centerVertical="true" />
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:text="Avaliar Evento"
+                android:textColor="@color/input_login"
+                android:background="@drawable/radius_button"
+                android:id="@+id/btn_evaluation"
+                android:layout_below="@+id/btn_favoritar_desfavoritar"
+                android:layout_centerVertical="true" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:id="@+id/linear_tab_detalhe_evento"
-                android:layout_below="@id/img_logo_detalhe"
+                android:layout_below="@id/btn_evaluation"
                 android:orientation="vertical">
                 <TextView
                     android:layout_width="wrap_content"
@@ -130,8 +151,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -141,7 +160,6 @@
                 android:layout_marginTop="20dp"
                 android:layout_below="@+id/linear_tab_detalhe_evento"
                 android:layout_centerHorizontal="true" />
-
 
         </RelativeLayout>
     </ScrollView>

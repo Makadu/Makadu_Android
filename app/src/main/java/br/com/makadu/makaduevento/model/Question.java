@@ -2,15 +2,27 @@ package br.com.makadu.makaduevento.model;
 
 import java.util.Date;
 
+import br.com.makadu.makaduevento.Util.Util;
+
 /**
  * Created by lucasschwalbeferreira on 11/04/15.
  */
 public class Question {
 
+    // "created_at": "2016-01-08T16:12:52.280-02:00",
+
     private String id;
     private String question;
     private String Speaker;
     private Date date;
+    public String string_datehour_created_at;
+
+    // retrofit server
+    public String user_id;
+    public String talk_id;
+    public String value;
+    public Date created_at;
+
 
     public Question(){}
 
@@ -30,11 +42,11 @@ public class Question {
     }
 
     public String getQuestion() {
-        return question;
+        return value;
     }
 
     public void setQuestion(String question) {
-        this.question = question;
+        this.value = question;
     }
 
     public String getSpeaker() {
@@ -45,8 +57,11 @@ public class Question {
         Speaker = speaker;
     }
 
-    public Date getDate() {
-        return date;
+    public String getDate() {
+        if(this.created_at != null)
+            this.string_datehour_created_at = new Util().getDateHour(this.created_at);
+
+        return string_datehour_created_at;
     }
 
     public void setDate(Date date) {

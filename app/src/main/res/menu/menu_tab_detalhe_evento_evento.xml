@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".UI.Tab_EventDetail_Talk_Paper">
+
+    <item
+        android:id="@+id/action_bell"
+        android:icon="@drawable/notification_white"
+        app:showAsAction="always"
+        android:title="@string/action_notification"/>
+
+    <item
+        android:id="@+id/action_favorite"
+        android:icon="@drawable/favorite_list"
+        app:showAsAction="always"
+        android:title="@string/action_notification"/>
+
+</menu>

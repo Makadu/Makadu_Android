@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="linear_1" type="id"/>
+    <item name="rating_bar_1" type="id"/>
+    <item name="edit_text_1" type="id"/>
+
+    <item name="linear_2" type="id"/>
+    <item name="rating_bar_2" type="id"/>
+    <item name="edit_text_2" type="id"/>
+
+    <item name="linear_3" type="id"/>
+    <item name="rating_bar_3" type="id"/>
+    <item name="edit_text_3" type="id"/>
+
+    <item name="linear_4" type="id"/>
+    <item name="rating_bar_4" type="id"/>
+    <item name="edit_text_4" type="id"/>
+
+    <item name="linear_5" type="id"/>
+    <item name="rating_bar_5" type="id"/>
+    <item name="edit_text_5" type="id"/>
+
+    <item name="linear_6" type="id"/>
+    <item name="rating_bar_6" type="id"/>
+    <item name="edit_text_6" type="id"/>
+
+    <item name="linear_7" type="id"/>
+    <item name="rating_bar_7" type="id"/>
+    <item name="edit_text_7" type="id"/>
+
+    <item name="linear_8" type="id"/>
+    <item name="rating_bar_8" type="id"/>
+    <item name="edit_text_8" type="id"/>
+
+    <item name="linear_9" type="id"/>
+    <item name="rating_bar_9" type="id"/>
+    <item name="edit_text_9" type="id"/>
+
+    <item name="linear_10" type="id"/>
+    <item name="rating_bar_10" type="id"/>
+    <item name="edit_text_10" type="id"/>
+
+</resources>

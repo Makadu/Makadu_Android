@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    package="br.com.makadu.makaduevento" >
+    package="br.com.makadu.makaduevento">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -16,17 +16,14 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <!-- <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" /> -->
 
+    <permission
+        android:name="br.com.makadu.makaduevento.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
 
-    <permission android:protectionLevel="signature"
-        android:name="br.com.makadu.makaduevento.permission.C2D_MESSAGE" />
     <uses-permission android:name="br.com.makadu.makaduevento.permission.C2D_MESSAGE" />
 
-    <!--
- To retrieve OAuth 2.0 tokens or invalidate tokens to disconnect a user. This disconnect
-     option is required to comply with the Google+ Sign-In developer policies
-    -->
     <application
         android:name=".MakaduApplication"
         android:allowBackup="true"
@@ -34,26 +31,19 @@
         android:label="@string/app_name"
         android:logo="@drawable/icon_white"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
-
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
-        <meta-data android:name="LOCALYTICS_APP_KEY" android:value="KEY"/>
-
-        <activity
-            android:name=".UI.EventActivity"
-            android:icon="@drawable/icon_white"
-            android:label="@string/app_name"
-            android:logo="@drawable/icon_white"
-            android:screenOrientation="portrait" >
-        </activity>
+        <meta-data
+            android:name="LOCALYTICS_APP_KEY"
+            android:value="389b2c16d335aedd0d70b6d-b35d782e-2cd1-11e5-479e-006918dcf667" />
 
         <activity
-            android:name=".UI.DispatchActivity"
-            android:noHistory="true"
-            android:screenOrientation="portrait" >
+            android:name=".UI.SplashScreen"
+            android:configChanges="keyboardHidden"
+            android:label="Makadu"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -61,75 +51,101 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".UI.EventActivity"
+            android:icon="@drawable/icon_white"
+            android:logo="@drawable/icon_white"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.Tab_Main"
+            android:icon="@drawable/icon_white"
+            android:label=""
+            android:logo="@drawable/icon_white"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.DispatchActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".UI.LoginActivity"
+            android:configChanges="keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateVisible"
-            android:configChanges="keyboardHidden">
-        </activity>
+            android:windowSoftInputMode="adjustResize|stateVisible" />
         <activity
-            android:name=".UI.Tab_EventDetail_Talk"
+            android:name=".UI.Tab_EventDetail_Talk_Paper"
             android:label="@string/title_activity_tab__detalhe__evento"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".UI.CreateAccountActivity"
+            android:configChanges="keyboardHidden"
             android:label="@string/app_name"
             android:noHistory="true"
-            android:screenOrientation="portrait"
-            android:configChanges="keyboardHidden">
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".UI.TalkDetailActivity"
             android:label="@string/title_activity_detalhe__programacao"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".UI.NoticeActivity"
             android:label="@string/title_activity_notification"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".UI.SponsorScreenActivity"
             android:label="@string/title_activity_sponsor_screen"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".UI.FavoriteActivity"
             android:label="@string/title_activity_favorite"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait" />
 
-        <service android:name="com.parse.PushService" />
-        <receiver android:name="com.parse.ParseBroadcastReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name="com.parse.GcmBroadcastReceiver"
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
-                <!--
-                  IMPORTANT: Change "com.parse.tutorials.pushnotifications" to match your app's package name.
-                -->
-                <category android:name="br.com.makadu.makaduevento" />
+                <category android:name="com.example.gcm" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.parse.ParsePushBroadcastReceiver" android:exported="false">
+
+        <service
+            android:name=".push.PushListenerService"
+            android:enabled="true"
+            android:exported="false">
             <intent-filter>
-                <action android:name="com.parse.push.intent.RECEIVE" />
-                <action android:name="com.parse.push.intent.DELETE" />
-                <action android:name="com.parse.push.intent.OPEN" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
             </intent-filter>
-        </receiver>
+        </service>
+        <service
+            android:name=".push.PushInstanceIDListenerService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".push.RegistrationIntentService"
+            android:exported="false" />
 
-        <!-- replace @drawable/push_icon with your push icon identifier -->
-        <meta-data android:name="com.parse.push.notification_icon" android:resource="@drawable/log_ini"/>
-
+        <activity
+            android:name=".UI.BeforeVoteActivity"
+            android:label="@string/title_activity_before_vote"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.InteractiveVoting"
+            android:label="@string/title_activity_interactive_voting"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.EvaluationActivity"
+            android:label="@string/title_activity_evaluation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.OptionsActivity"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

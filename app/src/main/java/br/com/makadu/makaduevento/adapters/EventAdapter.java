@@ -1,8 +1,10 @@
 package br.com.makadu.makaduevento.adapters;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +12,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
+import br.com.makadu.makaduevento.DAO.dao.entityDao.EventDao;
 import br.com.makadu.makaduevento.R;
+import br.com.makadu.makaduevento.Util.PicassoBigCache;
+import br.com.makadu.makaduevento.Util.Util;
 import br.com.makadu.makaduevento.model.Event;
 
 /**
@@ -50,15 +57,21 @@ public class EventAdapter extends ArrayAdapter<Event> {
         TextView datafim = (TextView)view.findViewById(R.id.txtDataFim);
         ImageView img_pat = (ImageView)view.findViewById(R.id.img_patrocinador);
 
-        nome.setText(events.get(position).getName());
-        cidade.setText(events.get(position).getCity());
-        dataini.setText(events.get(position).getStart_date());
-        datafim.setText(events.get(position).getEnd_date());
+        if(event != null){
+            nome.setText(event.getTitle());
+            cidade.setText(event.getCity());
+            dataini.setText(new Util().convertStringtoStringDateBrazil(event.getStart_date()));
+            datafim.setText(new Util().convertStringtoStringDateBrazil(event.getEnd_date()));
+        }
 
-        byte[] img_byte_pat = events.get(position).getFile_img_patronage();
-        if(img_byte_pat != null){
-            Bitmap bitmap_pat = BitmapFactory.decodeByteArray(img_byte_pat, 0, img_byte_pat.length);
-            img_pat.setImageBitmap(bitmap_pat);
+        try {
+            PicassoBigCache.INSTANCE.getPicassoBigCache(context).load(events.get(position).logo).into(img_pat);
+            //Resources res = getContext().getResources();
+            //Bitmap b = BitmapFactory.decodeResource(res,R.drawable.teste_event);
+            //img_pat.setImageBitmap(b);
+
+        }catch (Exception e) {
+            Log.e("log_Erro",e.getMessage());
         }
 
         return view;

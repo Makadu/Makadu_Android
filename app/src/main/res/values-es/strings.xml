@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Makadu</string>
+    <string name="app_aviso">Anuncios</string>
+    <string name="action_perfil">Perfil</string>
+    <string name="action_settings">Configuraciones</string>
+    <string name="title_activity_tab">Makadu</string>
+    <string name="title_section1">Evento</string>
+    <string name="title_todos">Eventos</string>
+    <string name="title_meusEventos">Mis eventos</string>
+    <string name="title_section2">Cronograma</string>
+    <string name="title_section3">Los artículos científicos</string>
+    <string name="title_activity_detalhe__evento">Detalles del evento</string>
+    <string name="title_activity_tab__detalhe__evento">Detalles</string>
+    <string name="title_activity_tab__detalhe__main">Makadu</string>
+    <string name="action_search">Buscar...</string>
+    <string name="action_notification">Notificaciones</string>
+    <string name="title_activity_detalhe__programacao">Detalles de la Conferencia</string>
+    <string name="title_activity_exemplo__notificacao">Notificación</string>
+    <string name="encaminha_download_pergunta">Clique na atividade para a qual deseja enviar uma pergunta ou fazer o download do conteúdo na PROGRAMAÇÃO !</string>
+    <string name="sent_email_when_available">Los documentos serán enviados a email %@, cuando estén disponibles.</string>
+    <string name="download_efetuado_sucesso">Los documentos han sido enviados a su email!</string>
+    <string name="pergunta_enviada_sucesso">Su pregunta ha sido enviada con éxito!</string>
+    <string name="rating">La calificación del evento ha sido enviada exitosamente</string>
+    <string name="aviso_email">Você receberá os slides nesse email. Se você não quiser usar seu email verdadeiro não tem problema, mas você não receberá os materiais que solicitar.</string>
+    <string name="row_questioning">Perguntar</string>
+    <string name="row_interactive">Interativa</string>
+    <string name="activity_loading_talk">Aguarde enquanto carregamos a programação completa...</string>
+    <string name="add_my_events">Añadir a mis Eventos</string>
+    <string name="submit">Enviar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="envie_perg">Enviar una pregunta!</string>
+    <string name="remove_my_events">Borrar de Mis Eventos</string>
+    <string name="password_to">Introduzca la contraseña del evento. Caso no la tengas, puedes pedir a la organización del evento.</string>
+    <string name="send_question">Enviar una Pregunta</string>
+    <string name="no_internet">Identificamos que voçê não está conectado na Internet ou não está navegando. Verifique e Tente novamente.</string>
+    <string name="exception_internet">Ocorreu Algum Problema com a Internet.</string>
+    <string name="about_activity">Acerca de la actividad</string>
+    <string name="about_Speaker">Información sobre el conferencista</string>
+    <string name="success_event">Evento añadido a su lista de Favoritos</string>
+
+    <string name="title_activity_notification">Notificaciones</string>
+    <string name="title_activity_sponsor_screen">Sponsor</string>
+    <string name="title_activity_favorite">Favoritos</string>
+    <string name="title_activity_tab__events__primary">Tab_Events_Primary</string>
+    <string name="title_activity_before_vote">BeforeVote</string>
+    <string name="title_activity_interactive_voting">InteractiveVoting</string>
+    <string name="title_activity_evaluation">Evaluation</string>
+</resources>
